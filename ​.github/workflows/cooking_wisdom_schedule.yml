@@ -1,0 +1,33 @@
+name: 🍣 Cooking Wisdom - Scheduled Production
+
+on:
+  schedule:
+    # 毎週 火曜日、木曜日の日本時間 17:50 に自動起動
+    - cron: '50 8 * * 2,4'
+  workflow_dispatch: # 手動ボタン
+
+permissions:
+  contents: write
+
+jobs:
+  run-cooking-wisdom:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Run Engine
+      env:
+        KDP_GEMINI_API_KEY: ${{ secrets.KDP_GEMINI_API_KEY }}
+      run: |
+        # 📂 cooking_wisdomのフォルダへ移動して、そこのエンジンだけを走らせます
+        cd channels/cooking_wisdom
+        python main.py
+    - name: Commit Deliverables
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Bot"
+        git add -A
+        git commit -m "🎥 [Cooking Wisdom] 本日の極上和食知恵データを格納しました [skip ci]" || echo "変更なし"
+        git push
