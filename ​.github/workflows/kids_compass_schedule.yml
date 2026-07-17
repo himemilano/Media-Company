@@ -1,0 +1,33 @@
+name: 🎒 Kids Compass - Scheduled Production
+
+on:
+  schedule:
+    # 毎週 月曜日、水曜日の日本時間 17:50 に自動起動
+    - cron: '50 8 * * 1,3'
+  workflow_dispatch: # いつでも手動で1本作成指示を出せるボタン
+
+permissions:
+  contents: write
+
+jobs:
+  run-kids-compass:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Run Engine
+      env:
+        KDP_GEMINI_API_KEY: ${{ secrets.KDP_GEMINI_API_KEY }}
+      run: |
+        # 📂 kids_compassのフォルダへ移動して、そこのエンジンだけをピンポイントで走らせます
+        cd channels/kids_compass
+        python main.py
+    - name: Commit Deliverables
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Bot"
+        git add -A
+        git commit -m "🎥 [Kids Compass] 本日の動画素材と台本を格納しました [skip ci]" || echo "変更なし"
+        git push
