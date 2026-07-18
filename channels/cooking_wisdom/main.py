@@ -1,257 +1,354 @@
-import os
+ import os
 import sys
 import json
 import time
 import requests
-import traceback
+import subprocess
 from datetime import datetime, timedelta, timezone
+from PIL import Image, ImageDraw, ImageFont
+
+# Google API公式ライブラリの読み込み
+try:
+    import google.oauth2.credentials
+    from googleapiclient.discovery import build
+    from googleapiclient.http import MediaFileUpload
+    YOUTUBE_API_AVAILABLE = True
+except ImportError:
+    YOUTUBE_API_AVAILABLE = False
 
 # ==========================================================
 # ⚙️ 1. 設定・ディレクトリ構成
 # ==========================================================
 jst = timezone(timedelta(hours=9))
-WORKSPACE_DIR = "youtube_workspace/japanese_cooking_wisdom"
+current_date = datetime.now(jst).strftime("%Y-%m-%d")
+
+TEMPLATE_DIR = "../../templates" # ルートの共通テンプレートフォルダを参照
+WORKSPACE_DIR = "workspace"      # ローカルフォルダ
+TEMP_DIR = "temp_assets"
+
 os.makedirs(WORKSPACE_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 class JapaneseCookingWisdomEngine:
     """
-    「Japanese Cooking Wisdom」チャンネルを完全自走で自動運営するシステム。
-    
-    【🛡️ リーガル＆コンプライアンス最優先防衛】：
-    ソースとなる本のPDF等に掲載されている実在の企業名（ニチレイなど）、大学名（京都大学など）、
-    特定の料理人・研究者などの固有名詞を完璧に匿名化・抽象化。
-    ブランド侵害やポリシー違反（KDP/YouTube規約）を100%回避する自律クレンジングエンジン。
+    【完全無人・自己修復・直撃アップロード型字幕合成システム】
     """
     def __init__(self, api_key):
         self.api_key = api_key
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
-    def safe_ask_gemini(self, prompt, system_instruction=""):
-        """API制限（429）や通信の一時的な切断を想定した、指数バックオフ自動リトライ防衛システム"""
+    def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key:
-            return "⚠️ [認証エラー] KDP_GEMINI_API_KEY が定義されていません。"
-
+            return "⚠️ API KEY IS MISSING"
+        
         headers = {"Content-Type": "application/json"}
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
             "systemInstruction": {"parts": [{"text": system_instruction}]}
         }
         url = f"{self.base_url}?key={self.api_key}"
-
-        retries = [2, 5, 10, 20]
-        for delay in retries:
+        
+        for delay in [1, 2, 4]:
             try:
-                res = requests.post(url, headers=headers, json=payload, timeout=90)
+                res = requests.post(url, headers=headers, json=payload, timeout=60)
                 if res.status_code == 200:
                     return res.json()["candidates"][0]["content"]["parts"][0]["text"]
                 elif res.status_code == 429:
-                    print(f"⚠️ [API一時制限検知] クォータ制限またはクレジット枯渇を検知。 {delay}秒後にリトライ...")
-                    time.sleep(delay)
-                else:
-                    print(f"⚠️ [API応答エラー] Status: {res.status_code}。再試行を待機します...")
+                    print(f"⚠️ API制限 (429)。{delay}秒待機して再試行します...")
                     time.sleep(delay)
             except Exception as e:
-                print(f"⚠️ [通信エラー] 接続に失敗しました: {e}")
+                print(f"⚠️ 接続エラー: {e}")
                 time.sleep(delay)
-                
-        return "⚠️ [自律復旧] APIエラーのため、ローカルのバックアップ用データに自動切り替えしました。"
+        return "⚠️ APIエラーのため、ローカル復旧データから補完します。"
 
-    def run_media_pipeline(self):
-        print(f"\n==========================================================")
-        print(f"🎥 YouTube [Japanese Cooking Wisdom] 自動運営部 起動")
-        print(f"🛡️ リーガル防衛モード: 【ON (すべての固有名詞を自動的に匿名・抽象化します)】")
-        print(f"🕒 実行時刻: {datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S JST')}")
-        print(f"==========================================================\n")
+    def generate_gradient_placeholder(self, width=1080, height=1920):
+        """🎨 テンプレート未作成時に、超高級感のある和風モダングラデーション背景を自動描写"""
+        img = Image.new("RGB", (width, height), (22, 22, 22)) 
+        draw = ImageDraw.Draw(img)
+        
+        for y in range(height):
+            r = int(22 + (28 - 22) * (y / height))
+            g = int(22 + (38 - 22) * (y / height))
+            b = int(22 + (45 - 22) * (y / height))
+            draw.line([(0, y), (width, y)], fill=(r, g, b))
+            
+        draw.rectangle([40, 40, width-40, height-40], outline=(197, 160, 89), width=2)
+        
+        path = os.path.join(TEMP_DIR, "placeholder_bg.png")
+        img.save(path)
+        return path
 
-        # 本日の投稿データ（TSV、SEO、台本）がすでに完全に作成済みであれば、APIを1回も叩かずに終了
-        final_manifest = os.path.join(WORKSPACE_DIR, "media_final_output_manifest.json")
-        if os.path.exists(final_manifest):
-            print("🌟 [高速スキップ] 本日分の動画台本・Canva流し込みデータは既に作成済みです。")
-            print("💡 重複したAPI課金を ¥0 に抑制して、そのまま安全に終了（即退勤）します。")
+    def generate_subtitle_image(self, text, output_path, width=1080, height=1920):
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        font_paths = [
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+            "Arial"
+        ]
+        font = None
+        for path in font_paths:
+            if os.path.exists(path):
+                font = ImageFont.truetype(path, 54)
+                break
+        if not font:
+            font = ImageFont.load_default()
+
+        words = text.split()
+        lines = []
+        current_line = []
+        for word in words:
+            current_line.append(word)
+            if len(" ".join(current_line)) > 18:
+                current_line.pop()
+                lines.append(" ".join(current_line))
+                current_line = [word]
+        if current_line:
+            lines.append(" ".join(current_line))
+            
+        final_text = "\n".join(lines[:2])
+
+        box_padding = 24
+        line_height = 65
+        
+        max_line_width = max([len(line) * 28 for line in lines]) if lines else 300
+        box_width = min(max_line_width + box_padding * 2, 980)
+        box_height = (len(lines) * line_height) + box_padding * 2
+        
+        box_x1 = (width - box_width) // 2
+        box_y1 = 1300
+        box_x2 = box_x1 + box_width
+        box_y2 = box_y1 + box_height
+
+        draw.rounded_rectangle(
+            [box_x1, box_y1, box_x2, box_y2],
+            radius=15,
+            fill=(0, 0, 0, 195)
+        )
+
+        for idx, line in enumerate(lines[:2]):
+            text_w = len(line) * 28
+            text_x = (width - text_w) // 2
+            text_y = box_y1 + box_padding + (idx * line_height)
+            draw.text((text_x, text_y), line, fill=(255, 255, 255, 255), font=font)
+
+        img.save(output_path, "PNG")
+
+    def upload_to_youtube(self, file_path, title, description, tags):
+        if not YOUTUBE_API_AVAILABLE:
+            print("⚠️ [YouTube API] 必要なパッケージがインポートされていません。アップロードをスキップします。")
+            return False
+
+        client_id = os.getenv("YOUTUBE_CLIENT_ID")
+        client_secret = os.getenv("YOUTUBE_CLIENT_SECRET")
+        # 🔑 JCW専用の合鍵を引き当てます！
+        refresh_token = os.getenv("YOUTUBE_REFRESH_TOKEN")
+
+        if not all([client_id, client_secret, refresh_token]):
+            print("💡 [YouTube API] API認証トークンがSecretsに設定されていません。ローカルに完成動画を保存して終了します。")
+            return False
+
+        print("🚀 [YouTube API] JCWチャンネルへの自動アップロードプロセスを開始します...")
+        try:
+            creds = google.oauth2.credentials.Credentials(
+                token=None,
+                refresh_token=refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=client_id,
+                client_secret=client_secret
+            )
+            youtube = build("youtube", "v3", credentials=creds)
+
+            seo_title = f"{title[:80]} #Shorts #JapaneseCookingWisdom"
+
+            body = {
+                "snippet": {
+                    "title": seo_title,
+                    "description": description,
+                    "tags": tags + ["Shorts", "JapaneseCookingWisdom", "Washoku"],
+                    "categoryId": "27" 
+                },
+                "status": {
+                    "privacyStatus": "public", 
+                    "selfDeclaredMadeForKids": False
+                }
+            }
+
+            media = MediaFileUpload(file_path, chunksize=-1, resumable=True, mimetype="video/mp4")
+            request = youtube.videos().insert(
+                part="snippet,status",
+                body=body,
+                media_body=media
+            )
+
+            response = None
+            while response is None:
+                status, response = request.next_chunk()
+                if status:
+                    print(f"   [アップロード中] {int(status.progress() * 100)}% 完了...")
+
+            print(f"🎉 【YouTube投稿成功！】動画ID: {response.get('id')}")
+            print(f"🔗 視聴リンク: https://youtu.be/{response.get('id')}")
             return True
 
-        # ==========================================================
-        # 📚 ステップ1: 匿名化された科学コンセプト設定（APIコスト ¥0）
-        # ==========================================================
-        # 実在企業（ニチレイ等）や特定大学（京都大学等）の名前を一切排除し、完全に「最高峰の専門家集団」としてリブランディング
-        cooking_concepts = [
-            {
-                "id": "WISDOM-01", 
-                "name": "Umami Science: The Glutamate-Inosinate Synergy", 
-                "jp": "伝統和食の知恵：グルタミン酸とイノシン酸による旨味倍増シナジー（熟練料理長の科学的ノウハウ）"
-            },
-            {
-                "id": "WISDOM-02", 
-                "name": "The Perfect Freeze: Maximum Muscle Juiciness", 
-                "jp": "日本の先進冷凍保存技術（大手フリーズテック企業研究者）：牛肉の細胞壁を守る急速結晶化技術"
-            },
-            {
-                "id": "WISDOM-03", 
-                "name": "Golden Ratio Curry: The Onion Caramelization Science", 
-                "jp": "学術的スパイス研究クラブ（京都の超一流大学チーム）：タマネギのコクを最大化するメイラード化学反応"
-            },
-            {
-                "id": "WISDOM-04", 
-                "name": "The Perfect Rice: Initial 10-Second Wash Theory", 
-                "jp": "伝統和食の知恵：最初の10秒でお米の旨味を守るプロの研ぎ方とデンプン科学"
-            },
-            {
-                "id": "WISDOM-05", 
-                "name": "Drip-Free Fish: Japanese Cold-Chain Mastery", 
-                "jp": "フリーズテック科学：解凍後もドリップを出さず、魚の極上食感を保つ塩水処理プロセス"
-            },
-            {
-                "id": "WISDOM-06", 
-                "name": "Golden Ratio Curry: Volatile Oil Time Scale", 
-                "jp": "学術的スパイス研究クラブ：香り分子のシナジーを最大化する、スパイス投入の秒単位シミュレーション"
-            },
-            {
-                "id": "WISDOM-07", 
-                "name": "The Physics of the Perfect Knife Cut", 
-                "jp": "伝統和食の知恵：食材の細胞壁を破壊せず酸化を防ぎ、味覚をクリアにする和包丁の研ぎ方物理学"
-            },
-            {
-                "id": "WISDOM-08", 
-                "name": "Blanching Vegetables: Nutrients Preservation Science", 
-                "jp": "先端冷凍科学：ビタミンや色味、シャキシャキの歯応えを半永久的に保つブランジング急速冷却法"
-            },
-            {
-                "id": "WISDOM-09", 
-                "name": "Golden Ratio Curry: Balancing Acidity and Free Amino Acids", 
-                "jp": "学術的スパイス研究クラブ：味のトゲを消し去り、圧倒的なコクを生み出す酸味とアミノ酸の黄金調和"
-            },
-            {
-                "id": "WISDOM-10", 
-                "name": "The Physics of Tempura: Deep-Fry Dehydration", 
-                "jp": "伝統和食の知恵：衣を天然フィルターにして食材の余分な水分を脱水する天ぷらの蒸し焼き物理学"
-            }
-        ]
+        except Exception as e:
+            print(f"❌ YouTubeアップロード中に重大なエラーが発生しました: {e}")
+            return False
+
+    def run_rendering_pipeline(self):
+        print("🎬 [映像編集部 - Cooking Wisdom] 自律レンダリングプロセスを開始します。")
+
+        concepts = {
+            1: {"code": "JCW-A-UmamiDashi-v1", "name": "The Science of Dashi & Umami", "desc": "伝統和食の出汁（昆布と鰹節）の旨味シナジー効果。グルタミン酸とイノシン酸が結合して旨味が最大化する科学的仕組み。"},
+            2: {"code": "JCW-B-CryoMeat-v1", "name": "Cryo-Freezing Science: Meat Preservation", "desc": "先進冷凍技術。細胞を壊さずドリップを防ぎ、解凍後も抜群のジューシーさを保つための、最大氷結晶生成帯を最速で突破する温度管理。"},
+            3: {"code": "JCW-C-OnionCaramel-v1", "name": "The Chemistry of Caramelized Onions", "desc": "日本のエリート学術フード研究会によるカレー。タマネギの甘味とコクを極限まで引き出すメイラード反応の科学。"},
+            4: {"code": "JCW-D-RiceWash-v1", "name": "Perfect Rice: The Hydration Mechanism", "desc": "伝統的なお米研ぎと浸水の科学。最初の10秒間の洗米でヌカの吸水をシャットアウトし、デンプンのアルファ化を促すための最適な浸水温度。"},
+            5: {"code": "JCW-E-CryoFish-v1", "name": "Preservation Secrets: Drip-Free Seafood", "desc": "日本の先進食品保存。浸透圧を利用した塩水処理により、魚の解凍時にドリップを100%防ぎ、モチモチの食感を保つ科学。"},
+            6: {"code": "JCW-F-SpiceSynergy-v1", "name": "Molecular Spice Synergy in Curry", "desc": "学術的スパイスカレー研究。スパイスの揮発性香気成分を最大化し、香りのレイヤーを構築するための、秒単位でのスパイス投入プロセス。"},
+            7: {"code": "JCW-G-KnifePhysics-v1", "name": "The Physics of the Perfect Knife Cut", "desc": "包丁と切断の物理。ミクロのノコギリ刃を整えることで、食材の細胞壁を破壊せずに切断し、雑味や酸化を徹底的に防ぐプロの技術。"},
+            8: {"code": "JCW-H-CryoVeg-v1", "name": "Blanching: Capturing Vegetable Nutrients", "desc": "先端冷凍科学。野菜の色味、ビタミン、シャキシャキの食感を半永久的に保つための、秒単位のブランチング（不活性化熱処理）と冷水冷却法。"},
+            9: {"code": "JCW-I-AcidityUmami-v1", "name": "The Umami-Acid Balance Formula", "desc": "学術的スパイス研究。スパイスの尖りを消し去り、脳が美味しさを強く感じるアミノ酸と穏やかな酸味（バルサミコや果汁）の黄金比率。"},
+            10: {"code": "JCW-J-TempuraDehyd-v1", "name": "The Physics of Perfect Tempura", "desc": "和食の脱水工学。180度($180^\circ\text{C}$)の油の中で、小麦粉の衣を水分の通過フィルターとして用い、食材自体を内部から蒸気で蒸し上げる調理物理。"}
+        }
 
         day_of_year = datetime.now(jst).timetuple().tm_yday
-        chosen_concept = cooking_concepts[day_of_year % len(cooking_concepts)]
-        
-        print(f"🎬 本日の採用コンセプト: 【{chosen_concept['name']}】")
-        print(f"📌 内容詳細: {chosen_concept['jp']}")
+        concept_idx = (day_of_year % 10) + 1
+        chosen = concepts[concept_idx]
 
-        # ==========================================================
-        # ✍️ ステップ2: 30秒スライド用 匿名化バズ台本の生成
-        # ==========================================================
-        print("\n✍️ [ステップ 2/3] 欧米のグルメオタクに刺さる、完全匿名・知的ショート動画台本を作成中...")
-        script_file = os.path.join(WORKSPACE_DIR, "01_video_voice_script.md")
+        template_filename = f"{chosen['code']}.mp4"
+        input_template_path = os.path.join(TEMPLATE_DIR, template_filename)
+
+        use_placeholder_bg = False
+
+        if not os.path.exists(input_template_path):
+            print(f"💡 [自律防衛発動] テンプレート `{input_template_path}` はまだ作成されていません。")
+            print("💡 対策：Pythonグラフィックスを駆動し、超高級感のある和風モダンのグラデーション背景を自動生成して動画化します。")
+            
+            bg_png = self.generate_gradient_placeholder()
+            placeholder_mp4 = os.path.join(TEMP_DIR, "placeholder_bg_30s.mp4")
+            
+            ffmpeg_bg_cmd = [
+                "ffmpeg", "-y",
+                "-loop", "1", "-i", bg_png,
+                "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", 
+                "-c:v", "libx264", "-t", "30", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", "-shortest",
+                placeholder_mp4
+            ]
+            try:
+                subprocess.run(ffmpeg_bg_cmd, capture_output=True, check=True)
+                input_template_path = placeholder_mp4
+                use_placeholder_bg = True
+                print("✅ 30秒の高級和風モダン背景動画をローカルで自給自足ビルドしました！")
+            except Exception as e:
+                print(f"❌ 背景自給自足ビルドに失敗したため、本日は処理をスルーします: {e}")
+                return False
+
+        print("🤖 本物の調理科学ノウハウに合致する5枚のスライドテロップをGeminiに特注中...")
+        prompt = f"""
+Create 5 highly engaging, short, punchy slide subtitles for a 30-second YouTube Shorts video.
+The background topic being shown is exactly about: "{chosen['desc']}".
+The target audience is Western food geeks, high-end home cooks, and science enthusiasts.
+
+⚠️ STRICT ANONYMIZATION RULE:
+- Do NOT mention any specific corporate names (e.g., Nichirei), real university names (e.g., Kyoto University), or real book titles/authors.
+- Instead, refer to them anonymously as 'Elite Japanese Preservation Scientists', 'Top Culinary Scholars in Kyoto', or 'Michelin-starred Japanese Master Chefs'.
+- Subtitles MUST perfectly match the theme "{chosen['name']}".
+- Keep each slide text under 10 words (very short, highly professional).
+- Deliver strictly in JSON format with keys "slide_1" to "slide_5".
+"""
+        raw_json = self.ask_gemini(prompt, "You are an elite food science YouTube producer.")
         
-        prompt = (
-            f"Write a highly engaging 30-second YouTube Shorts video script for the channel 'Japanese Cooking Wisdom'. "
-            f"Theme: {chosen_concept['name']} ({chosen_concept['jp']})\n\n"
-            f"⚠️ STRICT COMPLIANCE RULE:\n"
-            f"Do NOT mention any specific corporate names (e.g., Nichirei), real university names (e.g., Kyoto University), "
-            f"or specific real-world book titles/author names. "
-            f"Instead, refer to them anonymously as 'Elite Culinary Scientists in Kyoto', 'Top Japanese Preservation Experts', "
-            f"or 'Michelin-starred Japanese Master Chefs'. Keep the original scientific/traditional core logic completely intact, but highly polished.\n\n"
-            "Format for a 30-second video template (5 slides, each showing for exactly 6 seconds):\n"
-            "Slide 1 (0-6s): Surprise Hook (A scientific culinary fact or master chef's secret).\n"
-            "Slide 2 (6-12s): The Science/Traditional mechanism explained simply.\n"
-            "Slide 3 (12-18s): The Breakthrough secret (e.g., molecular food science, or high-tech cold chain step).\n"
-            "Slide 4 (18-24s): Actionable step for home kitchens.\n"
-            "Slide 5 (24-30s): Incredible result & call to action ('Subscribe for more kitchen science!').\n\n"
-            "Deliver: 1. Complete Narrator Script (English, authoritative and fascinating) "
-            "2. Suggestion for background BGM vibe."
+        try:
+            cleaned_json = raw_json.replace("```json", "").replace("```", "").strip()
+            subtitles_data = json.loads(cleaned_json)
+        except Exception as e:
+            print(f"⚠️ JSONパースに失敗したため、デフォルトの安全な匿名字幕を自動ビルドします: {e}")
+            subtitles_data = {
+                "slide_1": f"Discover Japan's Legendary {chosen['name']}",
+                "slide_2": "Culinary science meets centuries of tradition.",
+                "slide_3": "The molecular balance changes everything.",
+                "slide_4": "Apply this simple formula in your kitchen.",
+                "slide_5": "Want to cook smarter? Subscribe for more secrets!"
+            }
+
+        print("🎨 Pillowグラフィックエンジンを駆動。透過字幕カードを自動作成中...")
+        sub_image_paths = []
+        for i in range(1, 6):
+            text_key = f"slide_{i}"
+            slide_text = subtitles_data.get(text_key, "Molecular Food Chemistry")
+            img_path = os.path.join(TEMP_DIR, f"slide_{i}.png")
+            
+            self.generate_subtitle_image(slide_text, img_path)
+            sub_image_paths.append(img_path)
+
+        output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed_shorts.mp4")
+        print(f"⚙️ FFmpeg動画合成エンジンを召喚。ミリ単位のタイムオーバーレイを実行中...")
+        
+        filter_complex = (
+            "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
+            "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
+            "[v2][3:v]overlay=0:0:enable='between(t,12,18)'[v3];"
+            "[v3][4:v]overlay=0:0:enable='between(t,18,24)'[v4];"
+            "[v4][5:v]overlay=0:0:enable='between(t,24,30)'[v5]"
         )
-        script_results = self.safe_ask_gemini(prompt, "You are an elite creative director for viral culinary science media on YouTube and TikTok.")
-        
-        if "⚠️" in script_results:
-            print("🛡️ [自己修復] API制限のため、ローカルの基本台本データに切り替えて安全に完了させます。")
-            script_results = (
-                f"# YouTube Shorts Script: {chosen_concept['name']}\n\n"
-                "[0-6s] Slide 1: Welcome to Japanese Cooking Wisdom. Ever wondered how top Kyoto food scientists craft the ultimate curry?\n"
-                "[6-12s] Slide 2: It is all about the chemistry of onion caramelization.\n"
-                "[12-18s] Slide 3: Controlling the exact temperature releases sweet amino compounds for intense depth.\n"
-                "[18-24s] Slide 4: Cook onions with a pinch of baking soda to speed up the process instantly.\n"
-                "[24-30s] Slide 5: Ready to elevate your cooking? Subscribe for more secrets!"
+
+        ffmpeg_cmd = [
+            "ffmpeg", "-y",
+            "-i", input_template_path,             
+            "-i", sub_image_paths[0],               
+            "-i", sub_image_paths[1],               
+            "-i", sub_image_paths[2],               
+            "-i", sub_image_paths[3],               
+            "-i", sub_image_paths[4],               
+            "-filter_complex", filter_complex,
+            "-map", "[v5]",                        
+            "-map", "0:a",                         
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-c:a", "copy" if not use_placeholder_bg else "aac", 
+            output_video_path
+        ]
+
+        try:
+            subprocess.run(ffmpeg_cmd, capture_output=True, text=True, check=True)
+            print(f"✅ 【完全自走レンダリング完了】お宝調理科学Shorts動画（MP4）が100%完成しました！")
+            
+            for path in sub_image_paths:
+                if os.path.exists(path):
+                    os.remove(path)
+            if use_placeholder_bg:
+                bg_png_path = os.path.join(TEMP_DIR, "placeholder_bg.png")
+                if os.path.exists(bg_png_path): os.remove(bg_png_path)
+                if os.path.exists(input_template_path): os.remove(input_template_path)
+                    
+            seo_prompt = f"Create a viral YouTube Shorts Title and Description for our video: '{chosen['name']}' using subtitles: {subtitles_data}. Strictly keep all real brand, university, or author names 100% anonymous."
+            seo_info = self.ask_gemini(seo_prompt, "You are a professional YouTube growth hacker.")
+            
+            self.upload_to_youtube(
+                file_path=output_video_path,
+                title=f"{chosen['name']} 🇯🇵",
+                description=seo_info,
+                tags=["Japan", "JapaneseFood", "FoodScience", "CulinaryArt", "MichelinSecrets"]
             )
-
-        with open(script_file, "w", encoding="utf-8") as f:
-            f.write(script_results)
-        print("💾 01_video_voice_script.md を安全に保存しました。")
-
-        # ==========================================================
-        # 🎨 ステップ3: Canva Pro「一括作成（Bulk Create）」用・完全匿名データ（TSV）
-        # ==========================================================
-        print("\n🎨 [ステップ 3/3] Canva Pro一括作成コピペ用データ（TSV）を作成中...")
-        canva_tsv_file = os.path.join(WORKSPACE_DIR, "02_canva_pro_shorts_tsv.txt")
-        
-        prompt = (
-            f"Based on the following video script:\n{script_results[:1200]}\n"
-            "Create a clean Tab-Separated (TSV) table format data with 5 rows (one for each 6-second slide) to directly paste into Canva Pro's Bulk Create tool.\n"
-            "Ensure NO specific corporate names, real university names, or book titles are included. Keep them anonymous.\n"
-            "Format Columns exactly like this:\n"
-            "Slide_Num | Time_Slot | On_Screen_Text (Very short, highly dramatic caption) | Science_Source | Culinary_Benefit\n"
-            "Row 1: (0-6s)\n"
-            "Row 2: (6-12s)\n"
-            "Row 3: (12-18s)\n"
-            "Row 4: (18-24s)\n"
-            "Row 5: (24-30s)\n"
-            "Provide ONLY the clean TSV table with a header. No meta-commentary, no explanation."
-        )
-        canva_tsv_data = self.safe_ask_gemini(prompt, "You are a professional Canva Pro automation formatting bot.")
-        
-        if "⚠️" in canva_tsv_data:
-            canva_tsv_data = (
-                "Slide_Num\tTime_Slot\tOn_Screen_Text\tScience_Source\tCulinary_Benefit\n"
-                f"1\t0-6s\tThe Molecular Curry Formula\tKyoto Food Scholars\tMaximum Depth\n"
-                f"2\t6-12s\tPerfecting Caramelization Chemistry\tMaillard Reaction Science\tRich Natural Sweetness\n"
-                f"3\t12-18s\tSecrets of Acid-Umami Balance\tElite Culinary Science\tHarmonized Flavor\n"
-                f"4\t18-24s\tBake At Precise Heat Curves\tExpert Kitchen Hack\tProfessional Results\n"
-                f"5\t24-30s\tSubscribe For Molecular Food Science!\tJapanese Cooking Wisdom\tElevate Your Skills"
-            )
-
-        with open(canva_tsv_file, "w", encoding="utf-8") as f:
-            f.write(canva_tsv_data)
-        print("💾 02_canva_pro_shorts_tsv.txt を安全に保存しました。")
-
-        # ==========================================================
-        # 📁 出荷マニフェスト（YouTube API自動連携用の予約情報を含む）
-        # ==========================================================
-        seo_title = f"{chosen_concept['name'].split(' (')[0]} - Science Hack 🇯🇵 #Shorts #JapaneseCookingWisdom"
-        
-        manifest_data = {
-            "status": "Ready for YouTube Shorts Upload (Compliance Checked)",
-            "wisdom_id": chosen_concept["id"],
-            "wisdom_name_english": chosen_concept["name"],
-            "proposed_youtube_title": seo_title,
-            "seo_tags": ["JapaneseFood", "CookingScience", "CulinaryArt", "FoodScienceSecrets", "KitchenHacks", "JapaneseCookingWisdom", "Shorts"],
-            "script_file_path": script_file,
-            "canva_pro_bulk_tsv_path": canva_tsv_file,
-            "target_duration_seconds": 30,
-            "canva_page_transition_seconds": 6,
-            "canva_page_count": 5,
-            "estimated_api_cost_yen": 0.15,
-            "timestamp": datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S JST')
-        }
-        with open(final_manifest, "w", encoding="utf-8") as f:
-            json.dump(manifest_data, f, ensure_ok=False, indent=2)
-
-        print(f"\n✨ [完全自走完了] Japanese Cooking Wisdom 向け、リーガル防衛済みデータの生成に100%成功しました！")
-        print(f"📂 成果物フォルダ: {WORKSPACE_DIR}")
-        print(f"==========================================================\n")
-        return True
+            
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            print(f"❌ FFmpegレンダリング中にエラーが発生しました: {e.stderr}")
+            return False
 
 def main():
-    api_key = os.getenv("KDP_GEMINI_API_KEY")
+    # 🔑 会長が定義された「メディア統一キー」で完璧に起動！
+    api_key = os.getenv("GEMINI_API_KEY_MEDIA")
     
     if not api_key:
-        print("❌ [起動エラー] KDP_GEMINI_API_KEY がセットされていません。インフラ設定を確認してください。")
+        print("❌ GEMINI_API_KEY_MEDIA がセットされていません。")
         sys.exit(1)
 
     engine = JapaneseCookingWisdomEngine(api_key=api_key)
-    
-    try:
-        success = engine.run_media_pipeline()
-        if not success:
-            print("⚠️ 処理はスキップされました。")
-    except Exception as e:
-        print(f"\n🚨 [自律救済シールド] 重大な例外を検出しました: {e}")
-        traceback.print_exc()
-        print("💡 ですが、それまでに生成された成果物（01〜02）はディスクに安全に保持されています。コミットして正常退勤します。")
+    engine.run_rendering_pipeline()
 
 if __name__ == "__main__":
     main()
