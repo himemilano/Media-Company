@@ -1,33 +1,57 @@
-name: 🍣 Cooking Wisdom - Scheduled Production
+```yaml:Cooking Wisdom 起動スイッチ（APIキー新規格対応）:.github/workflows/cooking_wisdom_schedule.yml
+name: 🍳 Japanese Cooking Wisdom - Scheduled Video Production & Direct Upload
 
 on:
   schedule:
-    # 毎週 火曜日、木曜日の日本時間 17:50 に自動起動
+    # 毎週 火曜日、木曜日の日本時間 17:50 に自動実行
     - cron: '50 8 * * 2,4'
-  workflow_dispatch: # 手動ボタン
+  workflow_dispatch: # 手動実行用ボタン
 
 permissions:
   contents: write
 
 jobs:
-  run-cooking-wisdom:
+  build-and-generate-video:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - name: Run Engine
-      env:
-        KDP_GEMINI_API_KEY: ${{ secrets.KDP_GEMINI_API_KEY }}
+
+    - name: Install System Dependencies
       run: |
-        # 📂 cooking_wisdomのフォルダへ移動して、そこのエンジンだけを走らせます
+        sudo apt-get update
+        # 🎥 字幕合成エンジンに不可欠な「FFmpeg」をLinuxコンテナにインストール
+        sudo apt-get install -y ffmpeg
+
+    - name: Install Python Packages
+      run: |
+        python -m pip install --upgrade pip
+        # 画像生成（Pillow）、API接続（requests）、そしてGoogle公式YouTube API用ライブラリをまとめてインストール
+        pip install Pillow requests google-api-python-client google-auth-oauthlib google-auth-httplib2
+
+    - name: Run Auto Video Generator & YouTube Upload
+      env:
+        # 🔑 会長特製：メディア企業統一のAPIキーをコンテナ環境へ引き渡します！
+        GEMINI_API_KEY_MEDIA: ${{ secrets.GEMINI_API_KEY_MEDIA }}
+        # YouTube投稿用 OAuth認証情報（GCPから取得した合鍵：和食JCW専用）
+        YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+        YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+        YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JCW }}
+      run: |
+        echo "=== 🎬 Pillow + FFmpeg字幕自動レンダリング＆YouTube Data API自動アップロード ==="
         cd channels/cooking_wisdom
         python main.py
-    - name: Commit Deliverables
+
+    - name: Commit and Push Completed Video Assets
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action Bot"
         git add -A
-        git commit -m "🎥 [Cooking Wisdom] 本日の極上和食知恵データを格納しました [skip ci]" || echo "変更なし"
+        git commit -m "📦 [Cooking Wisdom] 本日のテロップ入り完成版Shorts動画(MP4)をリポジトリへ格納しました [skip ci]" || echo "変更なし"
         git push
