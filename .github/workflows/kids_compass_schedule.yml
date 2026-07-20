@@ -17,7 +17,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
-        lfs: true  # 👈 「本物の大容量動画データをダウンロードしてね」という命令
+        lfs: true
+
+    - name: Fetch Git LFS Objects
+      run: |
+        git lfs install
+        git lfs pull  # 👈 25MBの動画実体データを確実にGitHub Actions環境へ引き込む強力な命令
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -27,7 +32,7 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ffmpeg
+        sudo apt-get install -y ffmpeg fonts-dejavu-core  # 👈 テロップ表示を綺麗にするフォントも確実に用意します
 
     - name: Install Python Packages
       run: |
