@@ -31,7 +31,7 @@ except ImportError:
 jst = timezone(timedelta(hours=9))
 current_date = datetime.now(jst).strftime("%Y-%m-%d")
 
-TEMPLATE_DIR = "../../templates"
+TEMPLATE_DIR = "../../templates/japan_kids_compass"
 WORKSPACE_DIR = "workspace"      
 TEMP_DIR = "temp_assets"
 
