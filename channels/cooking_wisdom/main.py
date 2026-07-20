@@ -40,15 +40,17 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 class CookingWisdomEngine:
     def __init__(self, api_key):
         self.api_key = api_key
-        # ⭕ 正式版 v1 ＆ 最新の gemini-2.5-flash に固定完了
         self.base_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
 
     def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key: return "⚠️ API KEY MISSING"
         headers = {"Content-Type": "application/json"}
+        
+        # ⭕ 400エラーを完全に回避するため、システム指示をプロンプトの先頭に安全に融合させます
+        combined_prompt = f"[Role Instruction]\n{system_instruction}\n\n[Task]\n{prompt}" if system_instruction else prompt
+        
         payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "systemInstruction": {"parts": [{"text": system_instruction}]}
+            "contents": [{"parts": [{"text": combined_prompt}]}]
         }
         url = f"{self.base_url}?key={self.api_key}"
         for delay in [1, 2, 4]:
@@ -66,7 +68,6 @@ class CookingWisdomEngine:
         return "⚠️ API ERROR"
 
     def generate_cooking_gradient_placeholder(self, width=1080, height=1920):
-        # 🍳 料理用に合わせた、温かみのあるマホガニー・カフェ系グラデーション
         img = Image.new("RGB", (width, height), (54, 31, 20)) 
         draw = ImageDraw.Draw(img)
         for y in range(height):
@@ -107,7 +108,6 @@ class CookingWisdomEngine:
         box_x1, box_y1 = (width - box_width) // 2, 1300
         box_x2, box_y2 = box_x1 + box_width, box_y1 + box_height
 
-        # 料理に合うダークトーンのブラウン座布団
         draw.rounded_rectangle([box_x1, box_y1, box_x2, box_y2], radius=15, fill=(28, 18, 14, 220))
         for idx, line in enumerate(lines[:2]):
             text_x = (width - (len(line) * 26)) // 2
@@ -120,7 +120,7 @@ class CookingWisdomEngine:
             print("⚠️ edge-tts が利用できません。")
             return False
         full_script = " . ".join(voice_texts)
-        voice = "en-US-JennyNeural" # 🍳 料理に合う親しみやすい女性ナレーション
+        voice = "en-US-JennyNeural" 
         async def amain():
             communicate = edge_tts.Communicate(full_script, voice, rate="+3%")
             await communicate.save(output_path)
@@ -130,7 +130,6 @@ class CookingWisdomEngine:
     def run_rendering_pipeline(self):
         print("🎬 [Cooking Wisdom] レンダーパイプライン始動")
 
-        # 🍳 テンプレートがなくても毎日違う料理の雑学が生成される仕組み
         cooking_concepts = {
             1: {"filename": "JCW-A-Umami-v1.mp4", "theme": "The hidden power of Umami in traditional Japanese cuisine."},
             2: {"filename": "JCW-B-Rice-v1.mp4", "theme": "The ultimate secret to perfectly washing and cooking sushi rice."},
@@ -153,7 +152,6 @@ class CookingWisdomEngine:
             print(f"ℹ️ 料理テンプレートがないため、専用の特製グラデーション背景を自動生成します。")
             bg_png = self.generate_cooking_gradient_placeholder()
             placeholder_mp4 = os.path.join(TEMP_DIR, "cooking_placeholder_bg_30s.mp4")
-            # 音声なしの動画テンプレートにダミー無音を追加
             ffmpeg_bg_cmd = ["ffmpeg", "-y", "-loop", "1", "-i", bg_png, "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-c:v", "libx264", "-t", "30", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", placeholder_mp4]
             subprocess.run(ffmpeg_bg_cmd, capture_output=True, check=True)
             input_template_path = placeholder_mp4
