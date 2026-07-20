@@ -1,4 +1,4 @@
-name: 🍳 Japanese Cooking Wisdom - Scheduled Video Production & Direct Upload
+name: "🍳 Japanese Cooking Wisdom - Scheduled Video Production & Direct Upload"
 
 on:
   schedule:
@@ -40,8 +40,6 @@ jobs:
         GEMINI_API_KEY_MEDIA: ${{ secrets.GEMINI_API_KEY_MEDIA }}
         # YouTube投稿用 OAuth認証情報（GCPから取得した合鍵：和食JCW専用）
         YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
-        # 💡 main.py側で参照している「API_KEY」または環境変数名に合わせて適切にバインドしてください
-        # もし main.py が API_KEY = os.environ.get("GEMINI_API_KEY_MEDIA") で動いているならこのままでOKです
         YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
         YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JCW }}
       run: |
