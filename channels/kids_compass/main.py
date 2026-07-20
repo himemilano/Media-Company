@@ -25,12 +25,12 @@ except ImportError:
     TTS_AVAILABLE = False
 
 # ==========================================================
-# ⚙️ 設定・ディレクトリ構成（実際のフォルダ名に修正）
+# ⚙️ 設定・ディレクトリ構成
 # ==========================================================
 jst = timezone(timedelta(hours=9))
 current_date = datetime.now(jst).strftime("%Y-%m-%d")
 
-TEMPLATE_DIR = "../../templates/kids_compass"  # 🔍 実態に合わせて修正
+TEMPLATE_DIR = "../../templates/kids_compass"  
 WORKSPACE_DIR = "workspace"      
 TEMP_DIR = "temp_assets"
 
@@ -55,9 +55,12 @@ class JapanKidsCompassEngine:
                 res = requests.post(url, headers=headers, json=payload, timeout=60)
                 if res.status_code == 200:
                     return res.json()["candidates"][0]["content"]["parts"][0]["text"]
-                elif res.status_code == 429:
+                else:
+                    print(f"⚠️ Gemini API Status Code: {res.status_code}")
+                    print(f"⚠️ Gemini Error Response: {res.text}")  # 🔍 エラー原因をログに全暴露させる
                     time.sleep(delay)
-            except Exception:
+            except Exception as e:
+                print(f"⚠️ Gemini Connection Error: {e}")
                 time.sleep(delay)
         return "⚠️ API ERROR"
 
@@ -124,11 +127,10 @@ class JapanKidsCompassEngine:
     def run_rendering_pipeline(self):
         print("🎬 [Japan Kids Compass] レンダーパイプライン始動")
 
-        # 🔍 実際のスクショに映っているファイル名に完全一致させました
         video_concepts = {
             1: {"filename": "JKC-A-Commute-v1.mp4", "theme": "The secret behind Japan's independent primary school commuters."},
             2: {"filename": "JKC-B-Classroom-v1.mp4", "theme": "Why Japanese children clean their own classrooms every day."},
-            3: {"filename": "JKC-C-Lunch-v1 .mp4", "theme": "How Japanese school lunches teach independence and nutrition."}, # ※スペース付きの実態に配慮
+            3: {"filename": "JKC-C-Lunch-v1 .mp4", "theme": "How Japanese school lunches teach independence and nutrition."}, 
             4: {"filename": "JKC-D-Cleaning-v1.mp4", "theme": "The community mindset built through school cleaning time."},
             5: {"filename": "JKC-E-Gym-v1.mp4", "theme": "How physical education in Japan deeply emphasizes teamwork."},
             6: {"filename": "JKC-F-Library-v1.mp4", "theme": "Why independent reading habits are prioritized in Japanese schools."},
@@ -153,26 +155,31 @@ class JapanKidsCompassEngine:
         else:
             print(f"🎯 本物の動画テンプレートを検出成功: {chosen['filename']}")
 
+        # 🧠 指定キーをプロンプトに再注入（AIの脱線を強固に防ぐ）
         prompt = f"""
 Create 5 engaging slide subtitles AND 5 matching spoken narration scripts for a 30-second YouTube Shorts.
 [TOPIC]: "{chosen['theme']}"
-[RULES]: Subtitles under 8 words. Narration under 15 words. Deliver strictly in JSON format.
+[RULES]: 
+- Subtitles under 8 words. 
+- Narration under 15 words. 
+- Deliver strictly in JSON format with keys "slide_1_text", "slide_1_voice" ... up to "slide_5_voice".
 """
         raw_json = self.ask_gemini(prompt, "You are a professional YouTube Shorts scriptwriter. Output pure JSON only.")
         
-        # 🧠 JSON抽出力を超絶強化（AIが余計な挨拶を喋っても確実にパースする）
+        if "⚠️" in raw_json:
+            print(f"❌ Gemini APIが正常なレスポンスを返さなかったため、処理を中断します。")
+            return False
+
         try:
             json_match = re.search(r'\{.*\}', raw_json, re.DOTALL)
             if json_match:
                 data = json.loads(json_match.group(0))
             else:
                 data = json.loads(raw_json)
-        except Exception:
-            print("⚠️ JSONパース失敗。緊急用テキストをランダム変化させて適用します。")
-            salt = random.randint(10, 99)
-            data = {f"slide_{i}_text": f"Kids Compass Insight {salt}" for i in range(1, 6)}
-            for i in range(1, 6): 
-                data[f"slide_{i}_voice"] = "Discover the incredible wisdom of Japanese independence and cultural traditions."
+        except Exception as e:
+            print(f"❌ JSONパース致命的エラー: {e}")
+            print(f"生のAI応答: {raw_json}")
+            return False
 
         sub_image_paths = []
         for i in range(1, 6):
@@ -226,4 +233,7 @@ Create 5 engaging slide subtitles AND 5 matching spoken narration scripts for a 
 if __name__ == "__main__":
     api_key = os.environ.get("GEMINI_API_KEY_MEDIA")
     engine = JapanKidsCompassEngine(api_key)
-    engine.run_rendering_pipeline()
+    success = engine.run_rendering_pipeline()
+    if not success:
+        print("❌ パイプラインが失敗したため、プロセスを異常終了させます。")
+        sys.exit(1)  # 👈 これで不具合がある時は確実に「赤色」で止まるようになります！
