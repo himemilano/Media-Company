@@ -1,10 +1,9 @@
-name: "🧩 Japan Kids Compass - Scheduled Video Production & Direct Upload"
+name: "🧩 Japan Kids Compass - Production Pipeline"
 
 on:
   schedule:
-    # 毎週 月曜日、水曜日の日本時間 18:00 に自動実行 (UTC 9:00)
     - cron: '0 9 * * 1,3'
-  workflow_dispatch: # 手動実行用ボタン
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,48 +11,47 @@ permissions:
 jobs:
   build-and-generate-video:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
         lfs: true
 
-    - name: Fetch Git LFS Objects
+    - name: Validate LFS Integrity
       run: |
         git lfs install
-        git lfs pull  # 👈 25MBの動画実体データを確実にGitHub Actions環境へ引き込む強力な命令
+        git lfs pull
+        echo "--- 🔍 Checking file sizes (LFS Verification) ---"
+        ls -lh templates/kids_compass/
+        # 1MB以下のファイルがテンプレートにある場合、LFSが未同期とみなして中断する
+        find templates/kids_compass/ -name "*.mp4" -size -1M | grep . && exit 1 || echo "✅ LFS files verified."
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    - name: Install System Dependencies
+    - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ffmpeg fonts-dejavu-core  # 👈 テロップ表示を綺麗にするフォントも確実に用意します
-
-    - name: Install Python Packages
-      run: |
-        python -m pip install --upgrade pip
+        sudo apt-get install -y ffmpeg fonts-dejavu-core
+        pip install --upgrade pip
         pip install Pillow requests google-api-python-client google-auth-oauthlib google-auth-httplib2 edge-tts
 
-    - name: Run Auto Video Generator & YouTube Upload
+    - name: Run Auto Video Generator
       env:
         GEMINI_API_KEY_MEDIA: ${{ secrets.GEMINI_API_KEY_MEDIA }}
-        YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
-        YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
-        YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JKC }}
       run: |
-        echo "=== 🎬 Japan Kids Compass 自動レンダリングエンジン起動 ==="
+        echo "=== 🎬 起動: 厳密モード ==="
         cd channels/kids_compass
+        # 一時ディレクトリのクリーンアップ
+        rm -rf workspace/* temp_assets/*
         python main.py
 
-    - name: Commit and Push Completed Video Assets
+    - name: Commit and Push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action Bot"
         git add -A
-        git commit -m "📦 [Kids Compass] ナレーション・テロップ付き完成版Shorts動画をリポジトリへ格納しました [skip ci]" || echo "変更なし"
+        git commit -m "📦 [Kids Compass] 安全確認済み動画を格納" || echo "変更なし"
         git push
