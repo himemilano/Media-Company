@@ -112,29 +112,6 @@ class JapanKidsCompassEngine:
         asyncio.run(amain())
         return True
 
-    def get_youtube_service(self):
-        client_id = os.environ.get("YOUTUBE_CLIENT_ID")
-        client_secret = os.environ.get("YOUTUBE_CLIENT_SECRET")
-        refresh_token = os.environ.get("YOUTUBE_REFRESH_TOKEN")
-        if not (client_id and client_secret and refresh_token): return None
-        creds = google.oauth2.credentials.Credentials(
-            token=None, refresh_token=refresh_token, token_uri="https://oauth2.googleapis.com/token",
-            client_id=client_id, client_secret=client_secret
-        )
-        return build("youtube", "v3", credentials=creds)
-
-    def upload_video_to_youtube(self, video_path, title, description):
-        youtube = self.get_youtube_service()
-        if not youtube: return False
-        body = {
-            "snippet": {"title": title[:100], "description": description, "tags": ["Shorts", "Japan"], "categoryId": "27"},
-            "status": {"privacyStatus": "public", "selfDeclaredMadeForKids": False}
-        }
-        media = MediaFileUpload(video_path, chunksize=-1, resumable=True, mimetype="video/mp4")
-        request = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
-        response = request.execute()
-        return True
-
     def run_rendering_pipeline(self):
         print("🎬 [Japan Kids Compass] 自動スキャンモード起動")
         template_files = [f for f in os.listdir(TEMPLATE_DIR) if f.endswith(".mp4")]
@@ -168,15 +145,14 @@ class JapanKidsCompassEngine:
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         filter_complex = "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];[v2][3:v]overlay=0:0:enable='between(t,12,18)'[v3];[v3][4:v]overlay=0:0:enable='between(t,18,24)'[v4];[v4][5:v]overlay=0:0:enable='between(t,24,30)'[v5];[0:a]volume=0.25[bg];[6:a]volume=1.5[voice];[bg][voice]amix=inputs=2:duration=first[a]"
         
-        ffmpeg_cmd = ["ffmpeg", "-y", "-i", input_template_path] + \
-                     ["-i", p for p in sub_image_paths] + \
-                     ["-i", output_voice_path, "-filter_complex", filter_complex, "-map", "[v5]", "-map", "[a]", "-c:v", "libx264", "-c:a", "aac", output_video_path]
+        # 💡 修正箇所：FFmpegコマンドの構築を安全な方法に変更
+        ffmpeg_cmd = ["ffmpeg", "-y", "-i", input_template_path]
+        for p in sub_image_paths:
+            ffmpeg_cmd.extend(["-i", p])
+        ffmpeg_cmd.extend(["-i", output_voice_path, "-filter_complex", filter_complex, "-map", "[v5]", "-map", "[a]", "-c:v", "libx264", "-c:a", "aac", output_video_path])
 
         subprocess.run(ffmpeg_cmd, check=True)
         print(f"✅ 動画生成完了: {output_video_path}")
-        
-        # 💡 ここでアップロードを呼び出す（必要に応じてコメントアウトを外してください）
-        # self.upload_video_to_youtube(output_video_path, f"Japan's School Secrets: {theme_name}", "Discover more about Japan.")
         return True
 
 if __name__ == "__main__":
