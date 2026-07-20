@@ -153,7 +153,7 @@ class JapanKidsCompassEngine:
             "snippet": {
                 "title": title[:100],
                 "description": description,
-                "tags": ["Shorts", "Japan", "KidsCompass"],
+                "tags": ["Shorts", "Japan", "KidsCompass", "Education"],
                 "categoryId": "27"
             },
             "status": {
@@ -188,12 +188,17 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-        # 💡 プロンプトを修正: ファイル名そのものをテロップに出さないよう指示
+        # 💡 新規：タイトル・概要欄生成のプロンプト
         prompt = f"""
-        Generate 5 slide subtitles and narration scripts for a 30s Short about the theme: '{theme_name}'. 
-        IMPORTANT: Do not include the theme name, file ID, or 'v1' in the slide text. 
-        Focus only on educational insights for kids.
-        Output ONLY JSON: slide_1_text...slide_5_voice.
+        Generate content for a 30s Short about: '{theme_name}'.
+        1. YouTube Video Title (Catchy, English, max 100 chars).
+        2. Video Description (Engaging, English, including hashtags).
+        3. 5 slide subtitles and narration scripts.
+        
+        CRITICAL RULES:
+        - Do NOT include the theme name, file ID, or 'v1' in the slide text.
+        - Focus only on educational, child-friendly insights.
+        - Output ONLY pure JSON format: {{"title": "...", "description": "...", "slide_1_text": "...", "slide_1_voice": "...", "slide_2_text": "...", "slide_2_voice": "...", "slide_3_text": "...", "slide_3_voice": "...", "slide_4_text": "...", "slide_4_voice": "...", "slide_5_text": "...", "slide_5_voice": "..."}}
         """
         raw_json = self.ask_gemini(prompt, "You are a YouTube expert. Output ONLY JSON.")
         
@@ -203,6 +208,10 @@ class JapanKidsCompassEngine:
         except Exception as e:
             print(f"JSON Error: {e}")
             return False
+
+        # タイトルと概要欄の抽出
+        video_title = data.get("title", f"Japan Kids Compass: {theme_name}")
+        video_desc = data.get("description", "Discover insights into Japanese school life with Japan Kids Compass.")
 
         sub_image_paths = []
         for i in range(1, 6):
@@ -217,6 +226,7 @@ class JapanKidsCompassEngine:
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         
+        # duration=longest に修正（音声が途切れないように）
         filter_complex = (
             "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
             "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
@@ -248,8 +258,8 @@ class JapanKidsCompassEngine:
             # YouTubeへのアップロードを確実に呼び出す
             self.upload_video_to_youtube(
                 output_video_path, 
-                f"Japan's School Secrets: {theme_name}", 
-                "Discover more about Japan."
+                video_title, 
+                video_desc
             )
             return True
         except subprocess.CalledProcessError as e:
