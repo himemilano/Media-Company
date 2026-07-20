@@ -40,15 +40,17 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 class JapanKidsCompassEngine:
     def __init__(self, api_key):
         self.api_key = api_key
-        # ⭕ 正式版 v1 ＆ 最新の gemini-2.5-flash に固定完了
         self.base_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
 
     def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key: return "⚠️ API KEY MISSING"
         headers = {"Content-Type": "application/json"}
+        
+        # ⭕ 400エラーを完全に回避するため、システム指示をプロンプトの先頭に安全に融合させます
+        combined_prompt = f"[Role Instruction]\n{system_instruction}\n\n[Task]\n{prompt}" if system_instruction else prompt
+        
         payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "systemInstruction": {"parts": [{"text": system_instruction}]}
+            "contents": [{"parts": [{"text": combined_prompt}]}]
         }
         url = f"{self.base_url}?key={self.api_key}"
         for delay in [1, 2, 4]:
@@ -66,7 +68,6 @@ class JapanKidsCompassEngine:
         return "⚠️ API ERROR"
 
     def generate_gradient_placeholder(self, width=1080, height=1920):
-        # 知育用のディープブルー系グラデーション
         img = Image.new("RGB", (width, height), (26, 36, 43)) 
         draw = ImageDraw.Draw(img)
         for y in range(height):
