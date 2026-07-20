@@ -1,4 +1,4 @@
-name: 🧩 Japan Kids Compass - Scheduled Video Production & Direct Upload
+name: "🧩 Japan Kids Compass - Scheduled Video Production & Direct Upload"
 
 on:
   schedule:
@@ -44,7 +44,7 @@ jobs:
         YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JKC }}
       run: |
         echo "=== 🎬 Japan Kids Compass 自動レンダリングエンジン起動 ==="
-        cd channels/japan_kids_compass
+        cd channels/kids_compass
         python main.py
 
     - name: Commit and Push Completed Video Assets
