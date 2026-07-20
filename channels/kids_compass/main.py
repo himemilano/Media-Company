@@ -33,8 +33,10 @@ WORKSPACE_DIR = "workspace"
 TEMP_DIR = "temp_assets"
 
 # 実行前にワークスペースをクリーンアップ
-if os.path.exists(WORKSPACE_DIR): shutil.rmtree(WORKSPACE_DIR)
-if os.path.exists(TEMP_DIR): shutil.rmtree(TEMP_DIR)
+if os.path.exists(WORKSPACE_DIR):
+    shutil.rmtree(WORKSPACE_DIR)
+if os.path.exists(TEMP_DIR):
+    shutil.rmtree(TEMP_DIR)
 os.makedirs(WORKSPACE_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
 
@@ -55,7 +57,8 @@ class JapanKidsCompassEngine:
         return True
 
     def ask_gemini(self, prompt, system_instruction=""):
-        if not self.api_key: return "⚠️ API KEY MISSING"
+        if not self.api_key:
+            return "⚠️ API KEY MISSING"
         headers = {"Content-Type": "application/json"}
         combined_prompt = f"[Role Instruction]\n{system_instruction}\n\n[Task]\n{prompt}" if system_instruction else prompt
         payload = {"contents": [{"parts": [{"text": combined_prompt}]}]}
@@ -81,7 +84,8 @@ class JapanKidsCompassEngine:
             if len(" ".join(current_line)) > 16:
                 lines.append(" ".join(current_line))
                 current_line = []
-        if current_line: lines.append(" ".join(current_line))
+        if current_line:
+            lines.append(" ".join(current_line))
         lines = lines[:3]
 
         line_widths = []
@@ -104,7 +108,8 @@ class JapanKidsCompassEngine:
         img.save(output_path, "PNG")
 
     def create_narration(self, voice_texts, output_path):
-        if not TTS_AVAILABLE: return False
+        if not TTS_AVAILABLE:
+            return False
         async def amain():
             full_script = " . ".join(voice_texts)
             communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="-10%")
@@ -112,10 +117,57 @@ class JapanKidsCompassEngine:
         asyncio.run(amain())
         return True
 
+    def get_youtube_service(self):
+        client_id = os.environ.get("YOUTUBE_CLIENT_ID")
+        client_secret = os.environ.get("YOUTUBE_CLIENT_SECRET")
+        refresh_token = os.environ.get("YOUTUBE_REFRESH_TOKEN")
+        if not (client_id and client_secret and refresh_token):
+            return None
+        creds = google.oauth2.credentials.Credentials(
+            token=None,
+            refresh_token=refresh_token,
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=client_id,
+            client_secret=client_secret
+        )
+        return build("youtube", "v3", credentials=creds)
+
+    def upload_video_to_youtube(self, video_path, title, description):
+        youtube = self.get_youtube_service()
+        if not youtube:
+            print("❌ YouTubeの認証情報が設定されていません")
+            return False
+        
+        body = {
+            "snippet": {
+                "title": title[:100],
+                "description": description,
+                "tags": ["Shorts", "Japan", "KidsCompass"],
+                "categoryId": "27"
+            },
+            "status": {
+                "privacyStatus": "public",
+                "selfDeclaredMadeForKids": False
+            }
+        }
+        
+        try:
+            media = MediaFileUpload(video_path, chunksize=-1, resumable=True, mimetype="video/mp4")
+            request = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
+            response = request.execute()
+            print(f"🎉 YouTubeアップロード大成功! Video ID: {response.get('id')}")
+            return True
+        except Exception as e:
+            print(f"❌ YouTubeアップロードエラー: {e}")
+            return False
+
     def run_rendering_pipeline(self):
         print("🎬 [Japan Kids Compass] 自動スキャンモード起動")
+        
         template_files = [f for f in os.listdir(TEMPLATE_DIR) if f.endswith(".mp4")]
-        if not template_files: return False
+        if not template_files:
+            print("❌ テンプレートが見つかりません。")
+            return False
 
         day_of_year = datetime.now(jst).timetuple().tm_yday
         chosen_filename = template_files[day_of_year % len(template_files)]
@@ -131,32 +183,66 @@ class JapanKidsCompassEngine:
         try:
             json_match = re.search(r'\{.*\}', raw_json, re.DOTALL)
             data = json.loads(json_match.group(0)) if json_match else json.loads(raw_json)
-        except: return False
+        except Exception as e:
+            print(f"JSON Error: {e}")
+            return False
 
         sub_image_paths = []
         for i in range(1, 6):
             img_path = os.path.join(TEMP_DIR, f"slide_{i}.png")
-            self.generate_subtitle_image(data.get(f"slide_{i}_text", "Insight"), img_path)
+            text = data.get(f"slide_{i}_text", "Insight")
+            self.generate_subtitle_image(text, img_path)
             sub_image_paths.append(img_path)
 
         output_voice_path = os.path.join(TEMP_DIR, "narration.mp3")
-        self.create_narration([data.get(f"slide_{i}_voice", "") for i in range(1, 6)], output_voice_path)
+        voice_texts = [data.get(f"slide_{i}_voice", "") for i in range(1, 6)]
+        self.create_narration(voice_texts, output_voice_path)
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
-        filter_complex = "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];[v2][3:v]overlay=0:0:enable='between(t,12,18)'[v3];[v3][4:v]overlay=0:0:enable='between(t,18,24)'[v4];[v4][5:v]overlay=0:0:enable='between(t,24,30)'[v5];[0:a]volume=0.25[bg];[6:a]volume=1.5[voice];[bg][voice]amix=inputs=2:duration=first[a]"
         
-        # 💡 修正箇所：FFmpegコマンドの構築を安全な方法に変更
+        # duration=longest に修正（音声が途切れないように）
+        filter_complex = (
+            "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
+            "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
+            "[v2][3:v]overlay=0:0:enable='between(t,12,18)'[v3];"
+            "[v3][4:v]overlay=0:0:enable='between(t,18,24)'[v4];"
+            "[v4][5:v]overlay=0:0:enable='between(t,24,30)'[v5];"
+            "[0:a]volume=0.25[bg];"  
+            "[6:a]volume=1.5[voice];" 
+            "[bg][voice]amix=inputs=2:duration=longest[a]"
+        )
+
         ffmpeg_cmd = ["ffmpeg", "-y", "-i", input_template_path]
         for p in sub_image_paths:
             ffmpeg_cmd.extend(["-i", p])
-        ffmpeg_cmd.extend(["-i", output_voice_path, "-filter_complex", filter_complex, "-map", "[v5]", "-map", "[a]", "-c:v", "libx264", "-c:a", "aac", output_video_path])
+        ffmpeg_cmd.extend([
+            "-i", output_voice_path, 
+            "-filter_complex", filter_complex, 
+            "-map", "[v5]", 
+            "-map", "[a]", 
+            "-c:v", "libx264", 
+            "-c:a", "aac", 
+            output_video_path
+        ])
 
-        subprocess.run(ffmpeg_cmd, check=True)
-        print(f"✅ 動画生成完了: {output_video_path}")
-        return True
+        try:
+            subprocess.run(ffmpeg_cmd, check=True)
+            print(f"✅ 動画生成完了: {output_video_path}")
+            
+            # YouTubeへのアップロードを確実に呼び出す
+            self.upload_video_to_youtube(
+                output_video_path, 
+                f"Japan's School Secrets: {theme_name}", 
+                "Discover more about Japan."
+            )
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"❌ FFmpegエラー: {e}")
+            return False
 
 if __name__ == "__main__":
     api_key = os.environ.get("GEMINI_API_KEY_MEDIA")
     engine = JapanKidsCompassEngine(api_key)
     success = engine.run_rendering_pipeline()
-    if not success: sys.exit(1)
+    if not success:
+        sys.exit(1)
