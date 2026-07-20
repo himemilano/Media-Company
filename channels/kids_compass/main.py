@@ -46,7 +46,6 @@ class JapanKidsCompassEngine:
         if not self.api_key: return "⚠️ API KEY MISSING"
         headers = {"Content-Type": "application/json"}
         
-        # ⭕ 400エラーを完全に回避するため、システム指示をプロンプトの先頭に安全に融合させます
         combined_prompt = f"[Role Instruction]\n{system_instruction}\n\n[Task]\n{prompt}" if system_instruction else prompt
         
         payload = {
@@ -130,6 +129,7 @@ class JapanKidsCompassEngine:
     def run_rendering_pipeline(self):
         print("🎬 [Japan Kids Compass] レンダーパイプライン始動")
 
+        # 🆕 新しいテンプレート「避難訓練(JKC-I)」を追加して全10種類に拡張しました
         video_concepts = {
             1: {"filename": "JKC-A-Commute-v1.mp4", "theme": "The secret behind Japan's independent primary school commuters."},
             2: {"filename": "JKC-B-Classroom-v1.mp4", "theme": "Why Japanese children clean their own classrooms every day."},
@@ -139,7 +139,8 @@ class JapanKidsCompassEngine:
             6: {"filename": "JKC-F-Library-v1.mp4", "theme": "Why independent reading habits are prioritized in Japanese schools."},
             7: {"filename": "JKC-G-SportsDay-v1.mp4", "theme": "The extreme passion and cooperation in Japanese 'Undokai'."},
             8: {"filename": "JKC-H-AfterSchool-v1.mp4", "theme": "How Japanese kids handle life and safety after the school bell rings."},
-            9: {"filename": "JKC-J-SafeNeighborhood-v1.mp4", "theme": "Why Japanese neighborhoods are safely designed for solo child walking."}
+            9: {"filename": "JKC-I-DisasterPreparedness-v1.mp4", "theme": "How Japanese schools train children to stay calm and safe during disaster drills."},
+            10: {"filename": "JKC-J-SafeNeighborhood-v1.mp4", "theme": "Why Japanese neighborhoods are safely designed for solo child walking."}
         }
 
         day_of_year = datetime.now(jst).timetuple().tm_yday
@@ -148,8 +149,16 @@ class JapanKidsCompassEngine:
 
         input_template_path = os.path.join(TEMPLATE_DIR, chosen["filename"])
 
-        if not os.path.exists(input_template_path):
-            print(f"⚠️ テンプレートが見つかりません。仮生成します: {input_template_path}")
+        # ファイル検証ロジック（LFS対策）
+        is_template_valid = False
+        if os.path.exists(input_template_path):
+            if os.path.getsize(input_template_path) > 100 * 1024:
+                is_template_valid = True
+            else:
+                print(f"⚠️ テンプレートファイルが小さすぎます（Git LFSポインタ等の可能性あり）: {os.path.getsize(input_template_path)} bytes")
+
+        if not is_template_valid:
+            print(f"⚠️ 有効な動画テンプレートを検出できなかったため、仮背景を自動生成します。")
             bg_png = self.generate_gradient_placeholder()
             placeholder_mp4 = os.path.join(TEMP_DIR, "placeholder_bg_30s.mp4")
             ffmpeg_bg_cmd = ["ffmpeg", "-y", "-loop", "1", "-i", bg_png, "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-c:v", "libx264", "-t", "30", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", placeholder_mp4]
@@ -180,7 +189,6 @@ Create 5 engaging slide subtitles AND 5 matching spoken narration scripts for a 
                 data = json.loads(raw_json)
         except Exception as e:
             print(f"❌ JSONパース致命的エラー: {e}")
-            print(f"生のAI応答: {raw_json}")
             return False
 
         sub_image_paths = []
