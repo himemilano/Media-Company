@@ -40,7 +40,8 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 class JapanKidsCompassEngine:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+        # ⭕ 正式版 v1 ＆ 最新の gemini-2.5-flash に固定完了
+        self.base_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
 
     def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key: return "⚠️ API KEY MISSING"
@@ -57,7 +58,7 @@ class JapanKidsCompassEngine:
                     return res.json()["candidates"][0]["content"]["parts"][0]["text"]
                 else:
                     print(f"⚠️ Gemini API Status Code: {res.status_code}")
-                    print(f"⚠️ Gemini Error Response: {res.text}")  # 🔍 エラー原因をログに全暴露させる
+                    print(f"⚠️ Gemini Error Response: {res.text}")
                     time.sleep(delay)
             except Exception as e:
                 print(f"⚠️ Gemini Connection Error: {e}")
@@ -65,6 +66,7 @@ class JapanKidsCompassEngine:
         return "⚠️ API ERROR"
 
     def generate_gradient_placeholder(self, width=1080, height=1920):
+        # 知育用のディープブルー系グラデーション
         img = Image.new("RGB", (width, height), (26, 36, 43)) 
         draw = ImageDraw.Draw(img)
         for y in range(height):
@@ -155,7 +157,6 @@ class JapanKidsCompassEngine:
         else:
             print(f"🎯 本物の動画テンプレートを検出成功: {chosen['filename']}")
 
-        # 🧠 指定キーをプロンプトに再注入（AIの脱線を強固に防ぐ）
         prompt = f"""
 Create 5 engaging slide subtitles AND 5 matching spoken narration scripts for a 30-second YouTube Shorts.
 [TOPIC]: "{chosen['theme']}"
@@ -236,4 +237,4 @@ if __name__ == "__main__":
     success = engine.run_rendering_pipeline()
     if not success:
         print("❌ パイプラインが失敗したため、プロセスを異常終了させます。")
-        sys.exit(1)  # 👈 これで不具合がある時は確実に「赤色」で止まるようになります！
+        sys.exit(1)
