@@ -25,20 +25,16 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        # 🎥 字幕合成およびナレーションBGMミックスに不可欠な「FFmpeg」をLinuxコンテナにインストール
         sudo apt-get install -y ffmpeg
 
     - name: Install Python Packages
       run: |
         python -m pip install --upgrade pip
-        # 画像生成（Pillow）、API接続（requests）、YouTube Data API、そして【🎙️ 高品質AIナレーション生成のedge-tts】をインストール
         pip install Pillow requests google-api-python-client google-auth-oauthlib google-auth-httplib2 edge-tts
 
     - name: Run Auto Video Generator & YouTube Upload
       env:
-        # 🔑 メディア企業統一のAPIキーをコンテナ環境へ引き渡します！
         GEMINI_API_KEY_MEDIA: ${{ secrets.GEMINI_API_KEY_MEDIA }}
-        # YouTube投稿用 OAuth認証情報（GCPから取得した合鍵：和食JCW専用）
         YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
         YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
         YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JCW }}
