@@ -138,6 +138,17 @@ class JapanKidsCompassEngine:
             print("❌ YouTubeの認証情報が設定されていません")
             return False
         
+        # 💡 チャンネル診断: どのチャンネルに接続しているか確認する
+        try:
+            channels = youtube.channels().list(part="snippet", mine=True).execute()
+            if channels.get("items"):
+                channel_name = channels["items"][0]["snippet"]["title"]
+                print(f"🔍 接続先チャンネル確認: {channel_name}")
+            else:
+                print("⚠️ チャンネルが見つかりません。認証アカウントを確認してください。")
+        except Exception as e:
+            print(f"⚠️ チャンネル確認エラー: {e}")
+        
         body = {
             "snippet": {
                 "title": title[:100],
@@ -177,7 +188,13 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-        prompt = f"Generate 5 slide subtitles and narration scripts for a 30s Short about: '{theme_name}'. Output JSON: slide_1_text...slide_5_voice."
+        # 💡 プロンプトを修正: ファイル名そのものをテロップに出さないよう指示
+        prompt = f"""
+        Generate 5 slide subtitles and narration scripts for a 30s Short about the theme: '{theme_name}'. 
+        IMPORTANT: Do not include the theme name, file ID, or 'v1' in the slide text. 
+        Focus only on educational insights for kids.
+        Output ONLY JSON: slide_1_text...slide_5_voice.
+        """
         raw_json = self.ask_gemini(prompt, "You are a YouTube expert. Output ONLY JSON.")
         
         try:
@@ -200,7 +217,6 @@ class JapanKidsCompassEngine:
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         
-        # duration=longest に修正（音声が途切れないように）
         filter_complex = (
             "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
             "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
