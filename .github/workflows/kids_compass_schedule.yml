@@ -1,9 +1,9 @@
-name: "🍳 Japanese Cooking Wisdom - Scheduled Video Production & Direct Upload"
+name: "🧩 Japan Kids Compass - Scheduled Video Production & Direct Upload"
 
 on:
   schedule:
-    # 毎週 火曜日、木曜日の日本時間 17:50 に自動実行
-    - cron: '50 8 * * 2,4'
+    # 毎週 月曜日、水曜日の日本時間 18:00 に自動実行 (UTC 9:00)
+    - cron: '0 9 * * 1,3'
   workflow_dispatch: # 手動実行用ボタン
 
 permissions:
@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        lfs: true  # 👈 「本物の大容量動画データをダウンロードしてね」という命令
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -37,10 +39,10 @@ jobs:
         GEMINI_API_KEY_MEDIA: ${{ secrets.GEMINI_API_KEY_MEDIA }}
         YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
         YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
-        YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JCW }}
+        YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JKC }}
       run: |
-        echo "=== 🎬 Pillow + edge-ttsナレーション + FFmpeg音声明瞭ミックス＆YouTube自動アップロード ==="
-        cd channels/cooking_wisdom
+        echo "=== 🎬 Japan Kids Compass 自動レンダリングエンジン起動 ==="
+        cd channels/kids_compass
         python main.py
 
     - name: Commit and Push Completed Video Assets
@@ -48,5 +50,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action Bot"
         git add -A
-        git commit -m "📦 [Cooking Wisdom] ナレーション＆BGMミックス済み完成版Shorts動画(MP4)を格納しました [skip ci]" || echo "変更なし"
+        git commit -m "📦 [Kids Compass] ナレーション・テロップ付き完成版Shorts動画をリポジトリへ格納しました [skip ci]" || echo "変更なし"
         git push
