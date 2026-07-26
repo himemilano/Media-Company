@@ -118,9 +118,9 @@ class JapanKidsCompassEngine:
         return True
 
     def get_youtube_service(self):
-        client_id = os.environ.get("YOUTUBE_CLIENT_ID")
-        client_secret = os.environ.get("YOUTUBE_CLIENT_SECRET")
-        refresh_token = os.environ.get("YOUTUBE_REFRESH_TOKEN")
+        client_id = os.environ.get("KIDS_YOUTUBE_CLIENT_ID")
+        client_secret = os.environ.get("KIDS_YOUTUBE_CLIENT_SECRET")
+        refresh_token = os.environ.get("KIDS_YOUTUBE_REFRESH_TOKEN")
         if not (client_id and client_secret and refresh_token):
             return None
         creds = google.oauth2.credentials.Credentials(
