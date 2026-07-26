@@ -138,7 +138,6 @@ class JapanKidsCompassEngine:
             print("❌ YouTubeの認証情報が設定されていません")
             return False
         
-        # 💡 チャンネル診断: どのチャンネルに接続しているか確認する
         try:
             channels = youtube.channels().list(part="snippet", mine=True).execute()
             if channels.get("items"):
@@ -188,7 +187,6 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-        # 💡 新規：タイトル・概要欄生成のプロンプト
         prompt = f"""
         Generate content for a 30s Short about: '{theme_name}'.
         1. YouTube Video Title (Catchy, English, max 100 chars).
@@ -209,9 +207,21 @@ class JapanKidsCompassEngine:
             print(f"JSON Error: {e}")
             return False
 
-        # タイトルと概要欄の抽出
         video_title = data.get("title", f"Japan Kids Compass: {theme_name}")
         video_desc = data.get("description", "Discover insights into Japanese school life with Japan Kids Compass.")
+
+        # 💡 【追加機能】生成されたタイトル・概要欄・ナレーション原稿をテキストファイルに保存
+        script_txt_path = os.path.join(WORKSPACE_DIR, f"{current_date}_script.txt")
+        with open(script_txt_path, "w", encoding="utf-8") as f:
+            f.write(f"=== THEME ===\n{theme_name}\n\n")
+            f.write(f"=== TITLE ===\n{video_title}\n\n")
+            f.write(f"=== DESCRIPTION ===\n{video_desc}\n\n")
+            f.write("=== SUBTITLES & NARRATION SCRIPTS ===\n")
+            for i in range(1, 6):
+                f.write(f"[Slide {i}]\n")
+                f.write(f"  Subtitle (Screen Text): {data.get(f'slide_{i}_text', '')}\n")
+                f.write(f"  Narration (Voice): {data.get(f'slide_{i}_voice', '')}\n\n")
+        print(f"📝 確認用スクリプトファイルを保存しました: {script_txt_path}")
 
         sub_image_paths = []
         for i in range(1, 6):
@@ -226,7 +236,6 @@ class JapanKidsCompassEngine:
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         
-        # duration=longest に修正（音声が途切れないように）
         filter_complex = (
             "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
             "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
@@ -255,7 +264,6 @@ class JapanKidsCompassEngine:
             subprocess.run(ffmpeg_cmd, check=True)
             print(f"✅ 動画生成完了: {output_video_path}")
             
-            # YouTubeへのアップロードを確実に呼び出す
             self.upload_video_to_youtube(
                 output_video_path, 
                 video_title, 
