@@ -1,0 +1,64 @@
+{
+  "brand_name": "Japan Kids Compass",
+
+  "channel_type": "Educational Cultural Media",
+
+  "target_audience": {
+    "primary": "American parents with children",
+    "secondary": "Parents interested in education and child development",
+    "age_range": "25-55"
+  },
+
+  "mission": "Help parents understand how Japanese daily habits, education, and community values shape responsible, empathetic, and independent children.",
+
+  "core_question": "Why does Japanese society produce such high levels of trust, safety, responsibility, and social harmony?",
+
+  "core_values": [
+    "Responsibility",
+    "Empathy",
+    "Respect",
+    "Community",
+    "Independence",
+    "Self-discipline",
+    "Trust",
+    "Gratitude"
+  ],
+
+  "content_focus": [
+    "School culture",
+    "Parenting practices",
+    "Moral education",
+    "Community involvement",
+    "Daily habits",
+    "Character development",
+    "Japanese social values"
+  ],
+
+  "tone": {
+    "style": "Warm documentary",
+    "voice": "Curious and educational",
+    "emotion": "Thought-provoking and optimistic"
+  },
+
+  "content_goal": "Reveal the deeper values hidden behind ordinary Japanese childhood experiences.",
+
+  "never_do": [
+    "Do not advertise products",
+    "Do not target children directly",
+    "Do not claim Japan is superior",
+    "Do not stereotype cultures",
+    "Do not use political messaging",
+    "Do not exaggerate facts",
+    "Do not create motivational speeches"
+  ],
+
+  "always_do": [
+    "Start with curiosity",
+    "Explain the reason behind behaviors",
+    "Connect habits to values",
+    "Provide one parenting insight",
+    "Encourage cultural understanding"
+  ],
+
+  "cta_style": "Follow for more insights into Japanese parenting and education."
+}
