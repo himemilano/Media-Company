@@ -1,1 +1,54 @@
+{
+  "scene": "Japanese elementary school children walking to school.",
 
+  "core_values": [
+    "Independence",
+    "Responsibility",
+    "Trust",
+    "Community",
+    "Safety"
+  ],
+
+  "observable_facts": [
+    "Many Japanese elementary school students walk to school.",
+    "Children often travel in small groups.",
+    "Parents usually do not drive children every day.",
+    "Children gradually gain independence from an early age.",
+    "Local volunteers often help monitor school routes."
+  ],
+
+  "deeper_meanings": [
+    "Independence develops through daily practice.",
+    "Communities share responsibility for children's safety.",
+    "Trust is built through repeated social interaction.",
+    "Children learn to navigate society on their own.",
+    "Responsibility grows when children are given responsibility."
+  ],
+
+  "possible_topics": [
+    "Why Japanese children walk to school alone.",
+    "How walking builds confidence.",
+    "Why Japanese communities protect children.",
+    "The hidden lesson behind school routes.",
+    "Why independence starts earlier in Japan.",
+    "How trust shapes Japanese society.",
+    "Why parents gradually let go.",
+    "How communities raise children together.",
+    "The relationship between freedom and responsibility.",
+    "What school commutes teach beyond transportation."
+  ],
+
+  "american_parent_takeaways": [
+    "Independence grows through practice.",
+    "Small responsibilities create confidence.",
+    "Children often become capable when trusted.",
+    "Communities can help support parents.",
+    "Daily routines teach life skills."
+  ],
+
+  "forbidden_claims": [
+    "Japan is perfectly safe.",
+    "All Japanese children walk alone.",
+    "Japanese parenting is superior."
+  ]
+}
