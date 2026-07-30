@@ -107,4 +107,47 @@
       "angle": "Independence",
       "path": [
         "After-school freedom",
-        "
+        "Real-world experience",
+        "Confidence",
+        "Independent adulthood"
+      ]
+    },
+    {
+      "angle": "Community",
+      "path": [
+        "Neighborhood interaction",
+        "Mutual trust",
+        "Community support",
+        "Safer society"
+      ]
+    },
+    {
+      "angle": "Responsibility",
+      "path": [
+        "Small daily tasks",
+        "Accountability",
+        "Self-management",
+        "Responsible citizenship"
+      ]
+    },
+    {
+      "angle": "Public Spaces",
+      "path": [
+        "Using public spaces",
+        "Respect for others",
+        "Social awareness",
+        "Social harmony"
+      ]
+    }
+  ],
+
+  "forbidden_claims": [
+    "All Japanese children are independent.",
+    "Japan is completely safe everywhere.",
+    "Children should never be supervised.",
+    "Japanese parenting is superior.",
+    "Freedom alone creates responsibility.",
+    "All neighborhoods in Japan are the same.",
+    "Japanese children never encounter problems."
+  ]
+}
