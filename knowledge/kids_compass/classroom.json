@@ -1,1 +1,162 @@
+{
+  "scene": "Japanese elementary school students learning together in the classroom, participating in discussions, group activities, presentations, and daily classroom responsibilities.",
 
+  "core_values": [
+    "Respect",
+    "Participation",
+    "Responsibility",
+    "Cooperation",
+    "Consideration"
+  ],
+
+  "observable_facts": [
+    "Students often work together in small groups.",
+    "Class discussions are a regular part of learning.",
+    "Children take turns performing classroom duties.",
+    "Students are expected to listen while others speak.",
+    "Many classroom activities emphasize cooperation as well as individual achievement.",
+    "Children participate in classroom decision-making appropriate to their age.",
+    "Students often help classmates who need support."
+  ],
+
+  "deeper_meanings": [
+    "Learning includes social development as well as academics.",
+    "Children practice expressing ideas while respecting others.",
+    "Participation teaches responsibility for group outcomes.",
+    "Listening is treated as an important skill.",
+    "Cooperation prepares children for life in a community.",
+    "Respectful disagreement is part of learning.",
+    "Students learn that their actions affect the group.",
+    "Shared responsibility creates stronger communities."
+  ],
+
+  "possible_topics": [
+    "Why Japanese classrooms focus on participation.",
+    "The hidden lesson behind classroom discussions.",
+    "How children learn respect through daily interactions.",
+    "Why listening is considered a skill.",
+    "What Japanese students learn beyond academics.",
+    "How classrooms teach responsibility.",
+    "Why cooperation matters in education.",
+    "The connection between classroom culture and society.",
+    "How children learn to work with different personalities.",
+    "What daily classroom routines teach about adulthood.",
+    "How respect becomes a habit.",
+    "Why social skills are practiced every day.",
+    "The surprising role of classroom responsibilities.",
+    "How schools prepare children for community life.",
+    "What a classroom can teach about citizenship."
+  ],
+
+  "american_parent_takeaways": [
+    "Academic success and social development can grow together.",
+    "Children learn communication through practice.",
+    "Listening is a skill that can be developed.",
+    "Participation builds confidence.",
+    "Shared responsibility helps children understand teamwork.",
+    "Respect is strengthened through daily habits."
+  ],
+
+  "social_connections": [
+    "Communication skills",
+    "Teamwork",
+    "Respectful behavior",
+    "Conflict resolution",
+    "Community participation",
+    "Social awareness",
+    "Civic responsibility"
+  ],
+
+  "social_connections_extended": [
+    "Children learn how to express opinions respectfully.",
+    "Children practice listening to different viewpoints.",
+    "Students learn to cooperate with people they did not choose.",
+    "Children learn that individual actions affect the group.",
+    "Classrooms become small-scale models of society.",
+    "Respectful communication reduces unnecessary conflict.",
+    "Students learn accountability through shared responsibilities.",
+    "Children gain experience balancing personal goals with group needs.",
+    "Participation helps build confidence and social competence."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Higher levels of social cooperation",
+    "Respectful public behavior",
+    "Stronger communication skills",
+    "Greater civic engagement",
+    "Improved conflict resolution",
+    "Stronger community participation",
+    "Higher levels of interpersonal trust",
+    "More responsible citizenship",
+    "Greater ability to work in diverse groups"
+  ],
+
+  "hook_questions": [
+    "Why do Japanese classrooms focus so much on cooperation?",
+    "Can a classroom teach respect?",
+    "Why is listening considered an important skill in Japan?",
+    "What if school was also training for community life?",
+    "How do children learn to work with people they did not choose?",
+    "Why do Japanese students take classroom responsibilities seriously?",
+    "What lesson is hidden inside everyday classroom routines?",
+    "Can classroom habits shape an entire society?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Participation",
+      "path": [
+        "Class discussions",
+        "Confidence",
+        "Communication skills",
+        "Active citizenship"
+      ]
+    },
+    {
+      "angle": "Respect",
+      "path": [
+        "Listening to others",
+        "Understanding different viewpoints",
+        "Mutual respect",
+        "Social harmony"
+      ]
+    },
+    {
+      "angle": "Responsibility",
+      "path": [
+        "Classroom duties",
+        "Accountability",
+        "Contribution",
+        "Responsible adulthood"
+      ]
+    },
+    {
+      "angle": "Cooperation",
+      "path": [
+        "Group activities",
+        "Teamwork",
+        "Community participation",
+        "Social trust"
+      ]
+    },
+    {
+      "angle": "Communication",
+      "path": [
+        "Expressing ideas",
+        "Listening skills",
+        "Conflict resolution",
+        "Healthy relationships"
+      ]
+    }
+  ],
+
+  "forbidden_claims": [
+    "All Japanese classrooms operate the same way.",
+    "Japanese students never disagree.",
+    "Japanese education is superior to all others.",
+    "Classroom cooperation eliminates conflict.",
+    "All students enjoy group activities.",
+    "Academic success automatically creates good character.",
+    "Japanese children are naturally more respectful."
+  ]
+}
