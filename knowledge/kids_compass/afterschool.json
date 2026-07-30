@@ -1,6 +1,5 @@
-
 {
-  "scene": "Japanese elementary school students spending time after school, walking home, visiting parks, attending clubs, running errands, and interacting with their local community.",
+  "scene": "Japanese elementary school students spending time after school, walking home, visiting parks, attending clubs, running errands, exploring their neighborhoods, and interacting with their local community.",
 
   "core_values": [
     "Independence",
@@ -15,7 +14,9 @@
     "Children often walk home without direct adult supervision.",
     "Some students attend clubs, lessons, or community activities.",
     "Children may visit local parks, libraries, or shops.",
-    "Students gradually receive more responsibility as they grow older."
+    "Students gradually receive more responsibility as they grow older.",
+    "Children frequently navigate familiar public spaces on their own.",
+    "Local residents often recognize and watch over neighborhood children."
   ],
 
   "deeper_meanings": [
@@ -23,7 +24,10 @@
     "Trust is earned through responsible behavior.",
     "Children learn decision-making through everyday situations.",
     "Communities help create safe environments for children.",
-    "Freedom is often paired with responsibility."
+    "Freedom is often paired with responsibility.",
+    "Children gain confidence by solving small problems independently.",
+    "Practical life skills are learned outside formal education.",
+    "Everyday experiences help children understand how society functions."
   ],
 
   "possible_topics": [
@@ -36,7 +40,12 @@
     "How communities support children's independence.",
     "What small errands teach about adulthood.",
     "Why real-world experiences build confidence.",
-    "How children gradually learn self-management."
+    "How children gradually learn self-management.",
+    "Why Japanese neighborhoods feel connected.",
+    "How children learn to navigate public spaces.",
+    "The surprising relationship between trust and safety.",
+    "What independence really means in Japan.",
+    "How daily responsibility shapes future adults."
   ],
 
   "american_parent_takeaways": [
@@ -44,7 +53,8 @@
     "Small responsibilities build confidence.",
     "Trust and accountability can develop together.",
     "Children often become more capable when given opportunities to practice.",
-    "Communities can play a role in supporting child development."
+    "Communities can play a role in supporting child development.",
+    "Practical experience often teaches lessons that cannot be learned in a classroom."
   ],
 
   "social_connections": [
@@ -52,7 +62,33 @@
     "Community trust",
     "Self-confidence",
     "Decision-making ability",
-    "Responsible citizenship"
+    "Responsible citizenship",
+    "Public awareness",
+    "Neighborhood engagement"
+  ],
+
+  "social_connections_extended": [
+    "Children learn how to navigate public spaces.",
+    "Children develop awareness of their surroundings.",
+    "Children practice interacting appropriately with unfamiliar adults.",
+    "Children gain confidence in everyday situations.",
+    "Communities become active participants in child development.",
+    "Trust between families and neighborhoods grows through repeated interaction.",
+    "Children gradually learn how society functions beyond the classroom.",
+    "Respect for shared public spaces develops naturally through use.",
+    "Children learn that freedom requires accountability."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Higher levels of independence",
+    "Stronger community trust",
+    "Greater civic participation",
+    "Increased confidence in public spaces",
+    "More responsible adult behavior",
+    "Greater social awareness",
+    "Stronger neighborhood relationships",
+    "Higher levels of public trust",
+    "Safer and more cooperative communities"
   ],
 
   "hook_questions": [
@@ -60,14 +96,15 @@
     "What if freedom was part of education?",
     "How does trust create independence?",
     "Why are children given responsibility at a young age?",
-    "What lesson is hidden inside after-school time?"
+    "What lesson is hidden inside after-school time?",
+    "How do children learn to function in society?",
+    "Can small responsibilities change a child's future?",
+    "Why do Japanese communities trust children more?"
   ],
 
-  "forbidden_claims": [
-    "All Japanese children are independent.",
-    "Japan is completely safe everywhere.",
-    "Children should never be supervised.",
-    "Japanese parenting is superior.",
-    "Freedom alone creates responsibility."
-  ]
-}
+  "story_angles": [
+    {
+      "angle": "Independence",
+      "path": [
+        "After-school freedom",
+        "
