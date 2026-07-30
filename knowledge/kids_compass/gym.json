@@ -1,72 +1,166 @@
 {
-  "scene": "Japanese elementary school students participating in physical education classes, stretching, running, exercising, and learning movement skills together.",
+  "scene": "Japanese elementary school students participating in physical education classes that include running, swimming, gymnastics, endurance activities, traditional movement skills, team exercises, and age-appropriate martial arts experiences.",
 
   "core_values": [
-    "Discipline",
-    "Persistence",
     "Self-Improvement",
+    "Perseverance",
+    "Discipline",
     "Respect",
-    "Healthy Habits"
+    "Resilience"
   ],
 
   "observable_facts": [
-    "Physical education is a regular part of Japanese school life.",
-    "Students participate regardless of athletic ability.",
-    "Classes often include warm-up exercises and group activities.",
-    "Students learn a variety of physical skills throughout the year.",
-    "Participation and effort are emphasized alongside performance."
+    "Physical education is a regular part of school life in Japan.",
+    "Students participate in a wide variety of activities throughout the year.",
+    "Classes may include running, swimming, gymnastics, jumping, throwing, and team activities.",
+    "Many schools conduct endurance runs or marathon-style events as part of physical education.",
+    "Students often practice skills repeatedly over time.",
+    "Physical education emphasizes participation and improvement.",
+    "Some schools introduce traditional martial arts experiences at appropriate grade levels.",
+    "Students are encouraged to challenge themselves while supporting classmates.",
+    "Activities are adapted to different ages and abilities.",
+    "Physical education is viewed as part of overall character development."
   ],
 
   "deeper_meanings": [
-    "Improvement is achieved through consistent practice.",
-    "Children learn that effort matters even when results are imperfect.",
-    "Physical challenges help build resilience.",
-    "Healthy habits are developed through repetition.",
-    "Respect for rules and teamwork supports personal growth."
+    "Progress is often valued more than natural talent.",
+    "Children learn that improvement comes through consistent effort.",
+    "Perseverance develops through repeated practice.",
+    "Physical challenges help build mental resilience.",
+    "Students learn to respect both success and failure.",
+    "Effort becomes a habit rather than a temporary motivation.",
+    "Children learn to set goals and work toward them.",
+    "Respect for rules creates a safe learning environment.",
+    "Physical education teaches how to handle discomfort and frustration constructively."
   ],
 
   "possible_topics": [
-    "Why Japanese schools value physical education.",
-    "The hidden lesson behind PE class.",
-    "How children learn persistence through exercise.",
-    "Why effort matters more than natural talent.",
-    "What physical education teaches beyond fitness.",
-    "How small improvements build confidence.",
-    "Why practice is a core part of Japanese education.",
-    "The connection between discipline and growth.",
-    "How schools teach resilience through movement.",
-    "What children learn when they keep trying."
+    "Why Japanese schools emphasize perseverance.",
+    "The hidden lesson behind physical education.",
+    "How children learn resilience through exercise.",
+    "Why effort matters more than talent.",
+    "What marathon practice teaches Japanese students.",
+    "How swimming lessons build confidence.",
+    "Why repetition is an important part of learning.",
+    "The connection between exercise and character development.",
+    "How physical education teaches discipline.",
+    "What children learn from challenging activities.",
+    "Why improvement is celebrated in Japanese schools.",
+    "How students learn to overcome frustration.",
+    "The surprising purpose of endurance activities.",
+    "What martial arts traditions teach about respect.",
+    "How physical education prepares children for life challenges."
   ],
 
   "american_parent_takeaways": [
-    "Confidence often grows through repeated effort.",
-    "Children benefit from learning how to overcome challenges.",
-    "Progress matters more than perfection.",
-    "Healthy routines create long-term habits.",
-    "Persistence can be practiced just like any other skill."
+    "Confidence often grows through overcoming challenges.",
+    "Children benefit from learning that improvement takes time.",
+    "Resilience can be strengthened through practice.",
+    "Effort and persistence are learnable skills.",
+    "Physical activities can support emotional development.",
+    "Small improvements deserve recognition."
   ],
 
   "social_connections": [
-    "Healthy lifestyles",
     "Resilience",
     "Self-discipline",
-    "Respect for rules",
-    "Lifelong habits"
+    "Healthy habits",
+    "Goal setting",
+    "Personal growth",
+    "Respect",
+    "Mental toughness"
+  ],
+
+  "social_connections_extended": [
+    "Children learn that success rarely happens immediately.",
+    "Students become more comfortable facing challenges.",
+    "Perseverance learned in sports often transfers to academics.",
+    "Respect for rules contributes to safer group activities.",
+    "Physical challenges help develop emotional regulation.",
+    "Children learn how to recover from setbacks.",
+    "Students build confidence through measurable improvement.",
+    "Goal-oriented thinking becomes a lifelong skill.",
+    "Discipline supports both individual and group success."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Greater resilience",
+    "Stronger self-discipline",
+    "Healthier lifestyles",
+    "Improved goal-setting skills",
+    "Higher persistence when facing challenges",
+    "Greater confidence through achievement",
+    "Stronger respect for rules and procedures",
+    "Better emotional regulation",
+    "More adaptable adults"
   ],
 
   "hook_questions": [
-    "Why do Japanese schools emphasize physical education?",
+    "Why do Japanese schools focus so much on perseverance?",
+    "Can physical education build character?",
     "What if effort mattered more than talent?",
-    "Can exercise teach resilience?",
-    "Why do children practice the same skills repeatedly?",
-    "What lesson is hidden inside PE class?"
+    "Why do students practice the same skills repeatedly?",
+    "What lesson is hidden inside endurance running?",
+    "How do children learn resilience?",
+    "Why is improvement celebrated in Japanese schools?",
+    "Can exercise prepare children for life's challenges?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Perseverance",
+      "path": [
+        "Repeated practice",
+        "Gradual improvement",
+        "Persistence",
+        "Long-term success"
+      ]
+    },
+    {
+      "angle": "Resilience",
+      "path": [
+        "Physical challenge",
+        "Overcoming difficulty",
+        "Mental toughness",
+        "Adaptability"
+      ]
+    },
+    {
+      "angle": "Self-Improvement",
+      "path": [
+        "Personal goals",
+        "Consistent effort",
+        "Progress",
+        "Confidence"
+      ]
+    },
+    {
+      "angle": "Respect",
+      "path": [
+        "Rules",
+        "Safety",
+        "Respect for others",
+        "Positive group culture"
+      ]
+    },
+    {
+      "angle": "Growth Mindset",
+      "path": [
+        "Not yet",
+        "Practice",
+        "Improvement",
+        "Lifelong learning"
+      ]
+    }
   ],
 
   "forbidden_claims": [
-    "All Japanese children enjoy physical education.",
-    "Japanese students are naturally more disciplined.",
+    "Japanese children are naturally more disciplined.",
     "Physical education guarantees success.",
-    "Japanese schools prioritize fitness above academics.",
-    "Exercise alone builds character."
+    "All Japanese schools teach the same activities.",
+    "Japanese students never dislike exercise.",
+    "Talent is unimportant.",
+    "Martial arts are taught in every school.",
+    "Japanese education is superior to all others."
   ]
 }
