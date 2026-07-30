@@ -1,28 +1,32 @@
 {
-  "scene": "Japanese elementary school students cleaning classrooms, hallways, and shared school spaces.",
+  "scene": "Japanese elementary school students cleaning classrooms, hallways, stairways, and shared school spaces together as part of their daily routine.",
 
   "core_values": [
     "Responsibility",
     "Respect",
     "Community",
     "Ownership",
-    "Self-discipline"
+    "Self-Discipline"
   ],
 
   "observable_facts": [
     "Japanese students often clean their own classrooms.",
     "Students participate in daily cleaning activities.",
     "Cleaning is usually done as a group.",
-    "Schools often have little or no dedicated janitorial staff for daily classroom cleaning.",
-    "Children learn cleaning routines from an early age."
+    "Schools often have little or no dedicated janitorial staff for routine classroom cleaning.",
+    "Children learn cleaning routines from an early age.",
+    "Students clean shared spaces, not only their personal areas.",
+    "Cleaning is integrated into the school day."
   ],
 
   "deeper_meanings": [
     "Children learn to take responsibility for shared spaces.",
-    "Cleaning teaches that someone must care for the environment.",
-    "Students develop respect for the work required to maintain cleanliness.",
+    "Cleaning teaches that environments remain clean because people care for them.",
+    "Students develop respect for the effort required to maintain public spaces.",
     "Shared responsibility strengthens community awareness.",
-    "Daily actions reinforce habits more effectively than lectures."
+    "Daily action reinforces values more effectively than lectures.",
+    "Children experience the consequences of their own actions.",
+    "Contributing to a group becomes a normal expectation."
   ],
 
   "possible_topics": [
@@ -35,7 +39,10 @@
     "Why Japanese schools focus on contribution instead of entitlement.",
     "How daily habits shape character.",
     "The surprising link between school cleaning and social trust.",
-    "Why responsibility grows through action."
+    "Why responsibility grows through action.",
+    "How children learn respect for public property.",
+    "What cleaning teaches beyond cleanliness.",
+    "Why Japanese public spaces are often so clean."
   ],
 
   "american_parent_takeaways": [
@@ -43,7 +50,8 @@
     "Children value things more when they help maintain them.",
     "Small daily habits build long-term character.",
     "Shared tasks can strengthen family and community bonds.",
-    "Contributing to a group teaches ownership and pride."
+    "Contributing to a group teaches ownership and pride.",
+    "Practical responsibility often teaches more than instructions."
   ],
 
   "social_connections": [
@@ -51,22 +59,99 @@
     "Reduced littering",
     "Respect for community property",
     "Stronger civic responsibility",
-    "Higher levels of social trust"
+    "Higher levels of social trust",
+    "Shared ownership of public environments"
+  ],
+
+  "social_connections_extended": [
+    "Children learn that public spaces belong to everyone.",
+    "Children experience the effort required to maintain clean environments.",
+    "Respect for shared property becomes a daily habit.",
+    "People are less likely to damage spaces they help maintain.",
+    "Communities become more cooperative when contribution is expected.",
+    "Children learn that someone must take responsibility for common spaces.",
+    "Personal accountability extends beyond school walls.",
+    "Respect for public environments often influences adult behavior."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Cleaner streets and public facilities",
+    "Reduced vandalism",
+    "Greater civic responsibility",
+    "Higher respect for public property",
+    "Stronger community ownership",
+    "Higher levels of social trust",
+    "More responsible adult behavior",
+    "Greater willingness to contribute to society",
+    "Improved public environment maintenance"
   ],
 
   "hook_questions": [
     "Why do Japanese students clean their own schools?",
-    "What if cleaning was considered part of education?",
-    "Could a broom teach responsibility better than a lecture?",
+    "Can a broom teach responsibility?",
+    "What if cleaning was part of education?",
     "Why are Japanese schools so clean?",
-    "What lesson are children really learning while cleaning?"
+    "What lesson is hidden inside school cleaning?",
+    "How does cleaning influence society?",
+    "Why do people take better care of places they clean themselves?",
+    "Can daily habits shape an entire culture?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Responsibility",
+      "path": [
+        "Cleaning classrooms",
+        "Personal accountability",
+        "Responsibility",
+        "Responsible adulthood"
+      ]
+    },
+    {
+      "angle": "Public Spaces",
+      "path": [
+        "Shared environments",
+        "Respect for property",
+        "Public behavior",
+        "Cleaner communities"
+      ]
+    },
+    {
+      "angle": "Contribution",
+      "path": [
+        "Helping the group",
+        "Community awareness",
+        "Social responsibility",
+        "Stronger society"
+      ]
+    },
+    {
+      "angle": "Social Trust",
+      "path": [
+        "Daily cooperation",
+        "Mutual respect",
+        "Community trust",
+        "Orderly public life"
+      ]
+    },
+    {
+      "angle": "Character Development",
+      "path": [
+        "Small daily habits",
+        "Self-discipline",
+        "Personal values",
+        "Long-term behavior"
+      ]
+    }
   ],
 
   "forbidden_claims": [
     "All Japanese schools are identical.",
     "Japan has no janitors.",
-    "Japanese children never dislike cleaning.",
+    "Japanese children always enjoy cleaning.",
     "Japanese education is superior to all others.",
-    "Cleaning alone creates a safe society."
+    "Cleaning alone creates a safe society.",
+    "Every public space in Japan is clean.",
+    "Cleaning guarantees good character."
   ]
 }
