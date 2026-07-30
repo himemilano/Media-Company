@@ -109,4 +109,37 @@
       "angle": "Community",
       "path": [
         "Neighborhood support",
-        "
+        "Shared responsibility",
+        "Community trust",
+        "Social cohesion"
+      ]
+    },
+    {
+      "angle": "Safety",
+      "path": [
+        "School routes",
+        "Situational awareness",
+        "Community involvement",
+        "Safety culture"
+      ]
+    },
+    {
+      "angle": "Responsibility",
+      "path": [
+        "Freedom",
+        "Accountability",
+        "Self-management",
+        "Responsible citizenship"
+      ]
+    }
+  ],
+
+  "forbidden_claims": [
+    "Japan is perfectly safe.",
+    "All Japanese children walk alone.",
+    "Japanese parenting is superior.",
+    "Walking alone guarantees independence.",
+    "All communities in Japan are identical.",
+    "Japanese children never encounter danger."
+  ]
+}
