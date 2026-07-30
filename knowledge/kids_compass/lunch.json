@@ -1,72 +1,160 @@
 {
-  "scene": "Japanese elementary school students serving and eating school lunch together in the classroom.",
+  "scene": "Japanese elementary school students preparing, serving, eating, and cleaning up school lunches together as part of the school day.",
 
   "core_values": [
     "Gratitude",
-    "Community",
     "Responsibility",
     "Respect",
-    "Cooperation"
+    "Community",
+    "Mindfulness"
   ],
 
   "observable_facts": [
-    "Students often serve lunch to their classmates.",
-    "Meals are usually eaten together in classrooms.",
-    "Children take turns performing lunch duties.",
-    "School lunches are planned with nutrition in mind.",
-    "Students are encouraged to appreciate the people involved in preparing food."
+    "School lunches are an important part of daily life in many Japanese schools.",
+    "Students often help distribute meals to classmates.",
+    "Children usually eat together in their classrooms.",
+    "Teachers commonly eat the same meal as students.",
+    "School lunches are often designed with nutrition in mind.",
+    "Students participate in cleaning up after meals.",
+    "Children are encouraged to appreciate the effort behind their food."
   ],
 
   "deeper_meanings": [
-    "Food is treated as something valuable rather than disposable.",
-    "Children learn that communities function when everyone contributes.",
-    "Serving others develops empathy and consideration.",
-    "Shared meals strengthen social bonds.",
-    "Gratitude becomes a daily habit through repeated practice."
+    "Meals are viewed as an opportunity to learn gratitude.",
+    "Children learn that food comes from the work of many people.",
+    "Sharing a meal strengthens social connections.",
+    "Students practice responsibility by helping serve and clean up.",
+    "Respect for food helps reduce unnecessary waste.",
+    "Daily routines reinforce appreciation rather than entitlement.",
+    "Eating together encourages a sense of community.",
+    "Food education extends beyond nutrition."
   ],
 
   "possible_topics": [
-    "Why Japanese students serve lunch to each other.",
-    "The hidden lesson behind Japanese school lunches.",
-    "How lunch teaches gratitude.",
-    "Why eating together matters.",
-    "The connection between food and community.",
+    "Why Japanese students help serve lunch.",
+    "The hidden lesson behind school lunch.",
+    "How school meals teach gratitude.",
+    "Why Japanese schools eat together.",
     "What children learn beyond nutrition.",
-    "How responsibility is taught during lunchtime.",
-    "Why Japanese schools treat lunch as education.",
-    "The surprising social benefits of shared meals.",
-    "How small routines build respect."
+    "The connection between food and responsibility.",
+    "How lunch becomes part of education.",
+    "Why reducing food waste starts in childhood.",
+    "What serving classmates teaches about community.",
+    "Why appreciation matters as much as nutrition.",
+    "How school lunch builds social skills.",
+    "The surprising role of lunchtime routines.",
+    "Why Japanese children thank people before eating.",
+    "What food teaches about respect."
   ],
 
   "american_parent_takeaways": [
-    "Children develop empathy when they help others.",
-    "Shared meals can strengthen family relationships.",
-    "Gratitude grows through daily practice.",
-    "Responsibility can be taught through simple routines.",
-    "Food can be used as an educational tool."
+    "Gratitude can be strengthened through daily habits.",
+    "Children learn responsibility through participation.",
+    "Shared meals help build social connections.",
+    "Understanding where food comes from encourages appreciation.",
+    "Small routines can shape long-term attitudes.",
+    "Respect for food can reduce unnecessary waste."
   ],
 
   "social_connections": [
-    "Respect for food",
-    "Reduced food waste",
-    "Stronger social bonds",
+    "Food appreciation",
     "Community participation",
-    "Appreciation for collective effort"
+    "Healthy eating habits",
+    "Waste reduction",
+    "Social responsibility",
+    "Respect for workers",
+    "Shared experiences"
+  ],
+
+  "social_connections_extended": [
+    "Children learn that food is the result of many people's efforts.",
+    "Students experience both receiving and contributing to a group activity.",
+    "Shared meals strengthen social bonds.",
+    "Respect for food often reduces wasteful behavior.",
+    "Children develop awareness of nutrition and balance.",
+    "Daily expressions of gratitude become lifelong habits.",
+    "Participation creates a sense of ownership and responsibility.",
+    "Food becomes a way to connect individuals with society."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Lower levels of food waste",
+    "Greater appreciation for food production",
+    "Stronger community connections",
+    "Healthier eating habits",
+    "Higher levels of gratitude",
+    "Greater social responsibility",
+    "Increased respect for service workers",
+    "More mindful consumption",
+    "Stronger awareness of collective effort"
   ],
 
   "hook_questions": [
-    "Why do Japanese children serve lunch to each other?",
-    "What if lunchtime was part of education?",
-    "Can serving food teach empathy?",
-    "Why do Japanese schools eat together?",
-    "What lesson is hidden inside a school lunch?"
+    "Why do Japanese students serve lunch to each other?",
+    "What if lunch was part of education?",
+    "How can a meal teach gratitude?",
+    "Why do Japanese children thank people before eating?",
+    "What lesson is hidden inside school lunch?",
+    "How does lunch help build community?",
+    "Can food reduce wasteful behavior?",
+    "Why is eating together so important?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Gratitude",
+      "path": [
+        "Preparing food",
+        "Appreciating effort",
+        "Daily gratitude",
+        "Respectful adulthood"
+      ]
+    },
+    {
+      "angle": "Community",
+      "path": [
+        "Sharing meals",
+        "Social connection",
+        "Belonging",
+        "Stronger communities"
+      ]
+    },
+    {
+      "angle": "Responsibility",
+      "path": [
+        "Serving classmates",
+        "Contribution",
+        "Accountability",
+        "Responsible citizenship"
+      ]
+    },
+    {
+      "angle": "Food Waste",
+      "path": [
+        "Respect for food",
+        "Mindful consumption",
+        "Reduced waste",
+        "Sustainable habits"
+      ]
+    },
+    {
+      "angle": "Food Education",
+      "path": [
+        "Nutrition",
+        "Healthy habits",
+        "Lifelong wellness",
+        "Better quality of life"
+      ]
+    }
   ],
 
   "forbidden_claims": [
+    "All Japanese school lunches are identical.",
     "Japanese children never waste food.",
-    "All Japanese schools follow identical lunch systems.",
-    "Japanese school lunches are perfect.",
-    "Japanese children always enjoy every meal.",
-    "School lunch alone creates social harmony."
+    "Japanese nutrition is perfect.",
+    "Japanese education is superior to all others.",
+    "School lunch alone creates gratitude.",
+    "Every child enjoys school lunch.",
+    "Food education guarantees healthy behavior."
   ]
 }
