@@ -1,5 +1,5 @@
 {
-  "scene": "Japanese elementary school students participating in sports day events, team competitions, relay races, and group performances.",
+  "scene": "Japanese elementary school students participating in sports day events, relay races, team competitions, group performances, and school-wide celebrations involving families and the local community.",
 
   "core_values": [
     "Teamwork",
@@ -11,62 +11,152 @@
 
   "observable_facts": [
     "Many Japanese schools hold annual sports day events.",
-    "Students participate in both individual and team activities.",
+    "Students participate in both team and individual activities.",
     "Classes often practice together for weeks before the event.",
-    "Parents and family members frequently attend.",
-    "Group performances are often as important as competitive events."
+    "Families are commonly invited to attend.",
+    "Schools may organize relay races, group performances, and cooperative games.",
+    "Students of different abilities participate.",
+    "Preparation is often considered part of the educational experience."
   ],
 
   "deeper_meanings": [
-    "Success is often viewed as a collective achievement.",
-    "Students learn to support teammates regardless of ability.",
-    "Effort is often valued alongside results.",
-    "Preparation teaches discipline and commitment.",
-    "Shared experiences strengthen community bonds."
+    "Success is often viewed as a collective achievement as well as an individual one.",
+    "Children learn to contribute to a group's success.",
+    "Practice teaches persistence and discipline.",
+    "Students learn how to support teammates.",
+    "Shared challenges strengthen social bonds.",
+    "Effort is often celebrated alongside outcomes.",
+    "Children learn that communities are built through participation.",
+    "Cooperation and competition can coexist."
   ],
 
   "possible_topics": [
     "Why Japanese schools hold sports day.",
     "The hidden lesson behind relay races.",
-    "Why effort matters as much as winning.",
     "How sports day teaches teamwork.",
+    "Why effort matters as much as winning.",
     "What children learn from practicing together.",
-    "Why group performances are important in Japan.",
-    "The connection between sports day and social skills.",
-    "How schools build community through shared goals.",
-    "Why perseverance is celebrated.",
-    "What sports day teaches beyond athletics."
+    "How sports day builds community.",
+    "The connection between teamwork and confidence.",
+    "Why group performances are important.",
+    "What sports day teaches beyond athletics.",
+    "How schools celebrate collective achievement.",
+    "Why perseverance is a core educational value.",
+    "How communities come together during sports day.",
+    "The surprising lesson behind school competitions.",
+    "What relay races teach about responsibility.",
+    "How teamwork becomes a lifelong skill."
   ],
 
   "american_parent_takeaways": [
     "Children grow through shared challenges.",
-    "Team experiences build social confidence.",
-    "Effort deserves recognition even without victory.",
+    "Team experiences help build confidence.",
+    "Effort deserves recognition regardless of outcome.",
     "Practice develops resilience.",
-    "Community participation strengthens children's development."
+    "Participation can be as important as performance.",
+    "Communities play an important role in child development."
   ],
 
   "social_connections": [
     "Teamwork",
     "Community engagement",
-    "Mutual support",
     "Perseverance",
+    "Mutual support",
+    "Leadership development",
+    "Social confidence",
     "Collective responsibility"
+  ],
+
+  "social_connections_extended": [
+    "Children learn to work toward shared goals.",
+    "Students practice supporting others even when they are competitors.",
+    "Success becomes associated with contribution rather than only individual achievement.",
+    "Shared preparation strengthens relationships.",
+    "Communities become involved in children's growth.",
+    "Students learn that effort contributes to group success.",
+    "Children experience both leadership and teamwork roles.",
+    "School events help strengthen social cohesion.",
+    "Perseverance becomes a practical life skill."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Stronger teamwork skills",
+    "Greater community participation",
+    "Higher levels of perseverance",
+    "Improved leadership abilities",
+    "Stronger social bonds",
+    "Greater willingness to contribute to groups",
+    "Higher civic engagement",
+    "Improved cooperation in diverse environments",
+    "More resilient communities"
   ],
 
   "hook_questions": [
     "Why do Japanese schools spend weeks preparing for sports day?",
-    "Is winning the most important goal?",
-    "What if teamwork mattered more than trophies?",
-    "Why do entire communities attend sports day?",
-    "What lesson is hidden inside a relay race?"
+    "What if teamwork mattered as much as winning?",
+    "Why are relay races so important in Japan?",
+    "Can sports teach community values?",
+    "What lesson is hidden inside sports day?",
+    "How do schools teach perseverance?",
+    "Why do families participate in school sports events?",
+    "Can competition strengthen cooperation?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Teamwork",
+      "path": [
+        "Relay races",
+        "Supporting teammates",
+        "Cooperation",
+        "Stronger communities"
+      ]
+    },
+    {
+      "angle": "Perseverance",
+      "path": [
+        "Practice",
+        "Effort",
+        "Resilience",
+        "Personal growth"
+      ]
+    },
+    {
+      "angle": "Community",
+      "path": [
+        "School events",
+        "Family involvement",
+        "Community participation",
+        "Social cohesion"
+      ]
+    },
+    {
+      "angle": "Leadership",
+      "path": [
+        "Group activities",
+        "Responsibility",
+        "Leadership experience",
+        "Confident adulthood"
+      ]
+    },
+    {
+      "angle": "Contribution",
+      "path": [
+        "Helping the team",
+        "Shared goals",
+        "Collective success",
+        "Responsible citizenship"
+      ]
+    }
   ],
 
   "forbidden_claims": [
-    "Japanese children care less about winning.",
-    "All Japanese schools organize sports day the same way.",
-    "Sports day eliminates competition.",
-    "Japanese education discourages individual achievement.",
-    "Sports day alone creates teamwork skills."
+    "Winning is unimportant in Japanese schools.",
+    "All Japanese schools hold sports day the same way.",
+    "Japanese children care less about competition.",
+    "Sports day guarantees teamwork skills.",
+    "Japanese education is superior to all others.",
+    "Every student enjoys sports day.",
+    "Sports events eliminate social conflict."
   ]
 }
