@@ -1,72 +1,162 @@
 {
-  "scene": "Japanese elementary school students participating in disaster preparedness drills and emergency evacuation exercises.",
+  "scene": "Japanese elementary school students walking through local neighborhoods, greeting residents, passing community volunteers, and interacting with familiar public spaces during daily life.",
 
   "core_values": [
-    "Preparedness",
+    "Community",
+    "Trust",
     "Responsibility",
-    "Resilience",
-    "Cooperation",
-    "Community"
+    "Awareness",
+    "Mutual Support"
   ],
 
   "observable_facts": [
-    "Japanese schools regularly conduct disaster drills.",
-    "Students practice evacuation procedures multiple times each year.",
-    "Children learn how to respond during earthquakes and other emergencies.",
-    "Schools often coordinate preparedness activities with local communities.",
-    "Disaster education begins at an early age."
+    "Many Japanese neighborhoods have community members who help watch over children.",
+    "Children often become familiar with local streets and public spaces.",
+    "School routes may include volunteer crossing guards or community monitors.",
+    "Children are encouraged to greet neighbors and local residents.",
+    "Schools often cooperate with local communities on child safety initiatives.",
+    "Neighborhood residents frequently recognize local children.",
+    "Safety education is reinforced both at school and in the community."
   ],
 
   "deeper_meanings": [
-    "Preparation reduces fear during emergencies.",
-    "Children learn that safety is a shared responsibility.",
-    "Practice creates confidence under pressure.",
-    "Communities become stronger when people know how to help each other.",
-    "Resilience is developed before a crisis occurs."
+    "Child safety is viewed as a shared community responsibility.",
+    "Trust grows through repeated interaction between families and neighbors.",
+    "Children learn that communities function through cooperation.",
+    "Awareness of surroundings contributes to safer behavior.",
+    "Strong social connections can improve neighborhood well-being.",
+    "People are more likely to help when they feel connected to their community.",
+    "Children learn that safety depends on participation, not only rules.",
+    "Communities become stronger when residents take an active role."
   ],
 
   "possible_topics": [
-    "Why Japanese schools practice disaster drills so often.",
-    "The hidden lesson behind evacuation training.",
-    "How preparation builds confidence.",
-    "Why emergency readiness starts in childhood.",
-    "The connection between preparedness and resilience.",
-    "How schools teach calm decision-making.",
-    "What children learn beyond safety procedures.",
-    "Why communities prepare together.",
-    "The surprising benefits of disaster education.",
-    "How practice reduces panic."
+    "Why Japanese neighborhoods help protect children.",
+    "The hidden lesson behind community watch programs.",
+    "How trust contributes to child safety.",
+    "Why children are encouraged to know their neighbors.",
+    "What makes Japanese neighborhoods feel connected.",
+    "How communities share responsibility for children.",
+    "Why greetings are more important than they seem.",
+    "The relationship between trust and safety.",
+    "How local involvement strengthens communities.",
+    "What children learn from interacting with neighbors.",
+    "Why community participation matters.",
+    "How neighborhoods help children become independent.",
+    "The surprising link between social trust and safety.",
+    "Why safe communities require active participation.",
+    "How everyday interactions strengthen society."
   ],
 
   "american_parent_takeaways": [
-    "Preparation can reduce anxiety.",
-    "Children gain confidence when they know what to do.",
-    "Practice is often more effective than explanation.",
-    "Families can benefit from discussing emergency plans together.",
-    "Resilience grows through preparation."
+    "Strong communities can support child development.",
+    "Trust grows through regular interaction.",
+    "Knowing neighbors can improve safety and well-being.",
+    "Children benefit from positive community relationships.",
+    "Shared responsibility can strengthen neighborhoods.",
+    "Small social habits can create long-term community benefits."
   ],
 
   "social_connections": [
-    "Community resilience",
-    "Emergency readiness",
-    "Public safety",
+    "Community trust",
+    "Neighborhood engagement",
+    "Child safety",
+    "Civic participation",
     "Mutual support",
-    "Crisis response capability"
+    "Social awareness",
+    "Community resilience"
+  ],
+
+  "social_connections_extended": [
+    "Children learn that communities are built through relationships.",
+    "Residents become more willing to help when they know one another.",
+    "Trust grows through repeated positive interactions.",
+    "Children develop confidence interacting with people outside their family.",
+    "Communities become more resilient when people participate.",
+    "Awareness of local surroundings contributes to safety.",
+    "Children learn that citizenship includes helping others.",
+    "Shared responsibility reduces social isolation.",
+    "Neighborhood connections create stronger support networks."
+  ],
+
+  "long_term_societal_outcomes": [
+    "Higher levels of social trust",
+    "Stronger neighborhood relationships",
+    "Greater civic participation",
+    "Safer communities",
+    "Improved community resilience",
+    "More active citizenship",
+    "Reduced social isolation",
+    "Stronger support networks",
+    "Greater willingness to help others"
   ],
 
   "hook_questions": [
-    "Why do Japanese children practice earthquake drills so often?",
-    "Can preparation reduce fear?",
-    "What if confidence is built before an emergency happens?",
-    "Why does Japan teach disaster readiness from childhood?",
-    "What lesson is hidden inside a disaster drill?"
+    "Why do Japanese neighborhoods help watch over children?",
+    "Can trust make a community safer?",
+    "What if child safety was everyone's responsibility?",
+    "Why are children encouraged to know their neighbors?",
+    "What lesson is hidden inside a simple greeting?",
+    "How does community involvement shape childhood?",
+    "Why do strong communities often feel safer?",
+    "Can everyday interactions strengthen society?"
+  ],
+
+  "story_angles": [
+    {
+      "angle": "Trust",
+      "path": [
+        "Knowing neighbors",
+        "Repeated interactions",
+        "Community trust",
+        "Safer communities"
+      ]
+    },
+    {
+      "angle": "Community",
+      "path": [
+        "Neighborhood participation",
+        "Mutual support",
+        "Shared responsibility",
+        "Social cohesion"
+      ]
+    },
+    {
+      "angle": "Child Safety",
+      "path": [
+        "Community awareness",
+        "Active involvement",
+        "Protective environments",
+        "Confident children"
+      ]
+    },
+    {
+      "angle": "Citizenship",
+      "path": [
+        "Helping others",
+        "Community participation",
+        "Civic responsibility",
+        "Stronger society"
+      ]
+    },
+    {
+      "angle": "Belonging",
+      "path": [
+        "Local relationships",
+        "Social connection",
+        "Community identity",
+        "Long-term resilience"
+      ]
+    }
   ],
 
   "forbidden_claims": [
-    "Japan is completely prepared for every disaster.",
-    "Disaster drills eliminate risk.",
-    "All Japanese schools follow identical procedures.",
-    "Japanese children never feel afraid during emergencies.",
-    "Preparedness guarantees safety."
+    "Japan is perfectly safe.",
+    "All Japanese neighborhoods are identical.",
+    "Community watch programs eliminate crime.",
+    "Japanese communities trust everyone.",
+    "Japanese parenting is superior.",
+    "Knowing neighbors guarantees safety.",
+    "Every child experiences the same level of community support."
   ]
 }
