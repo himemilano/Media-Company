@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_002_classroom
+
+=== TITLE ===
+Japan Kids Compass: Why Social Skills Are Practiced Every Day
+
+=== DESCRIPTION ===
+Explore how ordinary classroom experiences in Japanese elementary schools cultivate essential social skills, fostering independence, responsibility, trust, and community participation from a young age. This episode delves into the daily practices that build respect and social harmony.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Can a classroom teach respect?
+  Narration (Voice): In the bustling environment of a Japanese elementary school classroom, children are not just learning math or reading. They're also engaging in a daily curriculum of social interaction. This leads us to ask: Can a classroom truly teach respect?
+
+[Slide 2]
+  Subtitle (Screen Text): Students often help classmates who need support.
+  Narration (Voice): Watch closely, and you might observe a student gently guiding a classmate through a challenging problem, or helping organize shared materials. This isn't just a spontaneous act; it's often a cultivated part of the classroom dynamic, where supporting others is subtly encouraged.
+
+[Slide 3]
+  Subtitle (Screen Text): Learning includes social development as well as academics.
+  Narration (Voice): These small acts of kindness are not incidental; they are integral to a broader philosophy of education. In many Japanese classrooms, the development of social skills, like empathy and cooperation, is seen as equally vital as academic achievement. It's about learning to listen to others, and beginning to understand different viewpoints.
+
+[Slide 4]
+  Subtitle (Screen Text): Respectful communication reduces unnecessary conflict.
+  Narration (Voice): When children regularly practice listening and understanding each other, they begin to build a foundation of mutual respect. This foundation is crucial, as respectful communication naturally reduces misunderstandings and unnecessary conflict within the classroom, and by extension, within the wider community. It cultivates an environment where diverse voices can be heard constructively.
+
+[Slide 5]
+  Subtitle (Screen Text): Participation builds confidence.
+  Narration (Voice): For parents, observing these daily interactions reveals a profound insight: active participation, whether in group discussions or helping a friend, is not just about learning a lesson. It's about building confidence, developing a sense of belonging, and understanding one's role within a community. These experiences, practiced day by day, contribute to a child's holistic growth and a higher level of interpersonal trust throughout their lives.
+
