@@ -340,17 +340,95 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-        prompt = f"""
-        Generate content for a 30s Short about: '{theme_name}'.
-        1. YouTube Video Title (Catchy, English, max 100 chars).
-        2. Video Description (Engaging, English, including hashtags).
-        3. 5 slide subtitles and narration scripts.
-        
-        CRITICAL RULES:
-        - Do NOT include the theme name, file ID, or 'v1' in the slide text.
-        - Focus only on educational, child-friendly insights.
-        - Output ONLY pure JSON format: {{"title": "...", "description": "...", "slide_1_text": "...", "slide_1_voice": "...", "slide_2_text": "...", "slide_2_voice": "...", "slide_3_text": "...", "slide_3_voice": "...", "slide_4_text": "...", "slide_4_voice": "...", "slide_5_text": "...", "slide_5_voice": "..."}}
-        """
+                prompt = f"""
+You are an educational documentary storyteller.
+
+CHANNEL:
+Japan Kids Compass
+
+MISSION:
+Explain how ordinary Japanese childhood experiences help develop independence, responsibility, trust, social awareness, and community participation.
+
+SCENE:
+{story_brief["scene"]}
+
+HOOK QUESTION:
+{story_brief["hook"]}
+
+TOPIC:
+{story_brief["topic"]}
+
+OBSERVABLE FACT:
+{story_brief["fact"]}
+
+DEEPER MEANING:
+{story_brief["meaning"]}
+
+SOCIAL CONNECTION:
+{story_brief["social"]}
+
+LONG TERM OUTCOME:
+{story_brief["outcome"]}
+
+PARENT TAKEAWAY:
+{story_brief["takeaway"]}
+
+STORY ANGLE:
+{story_brief["angle"]}
+
+ANGLE PATH:
+{" -> ".join(story_brief["path"])}
+
+FORBIDDEN CLAIMS:
+{chr(10).join(story_brief["forbidden_claims"])}
+
+IMPORTANT RULES:
+
+- Never sound like an advertisement.
+- Never promote a product.
+- Never exaggerate.
+- Never claim Japan is perfect.
+- Never compare countries negatively.
+- Speak like a documentary narrator.
+- Focus on explaining causes and effects.
+- Each slide should naturally connect to the next.
+- Target audience is American parents.
+- Show how daily habits influence long-term social outcomes.
+
+SLIDE STRUCTURE:
+
+Slide 1:
+Hook question.
+
+Slide 2:
+Observable fact.
+
+Slide 3:
+Deeper meaning.
+
+Slide 4:
+Connection to society.
+
+Slide 5:
+Parent takeaway.
+
+OUTPUT ONLY VALID JSON:
+
+{{
+"title":"",
+"description":"",
+"slide_1_text":"",
+"slide_1_voice":"",
+"slide_2_text":"",
+"slide_2_voice":"",
+"slide_3_text":"",
+"slide_3_voice":"",
+"slide_4_text":"",
+"slide_4_voice":"",
+"slide_5_text":"",
+"slide_5_voice":""
+}}
+"""
         raw_json = self.ask_gemini(prompt, "You are a YouTube expert. Output ONLY JSON.")
         
         try:
@@ -417,11 +495,11 @@ class JapanKidsCompassEngine:
             subprocess.run(ffmpeg_cmd, check=True)
             print(f"✅ 動画生成完了: {output_video_path}")
             
-            self.upload_video_to_youtube(
-                output_video_path, 
-                video_title, 
-                video_desc
-            )
+           # self.upload_video_to_youtube(
+           #     output_video_path, 
+           #     video_title, 
+           #     video_desc
+           # )
             return True
         except subprocess.CalledProcessError as e:
             print(f"❌ FFmpegエラー: {e}")
