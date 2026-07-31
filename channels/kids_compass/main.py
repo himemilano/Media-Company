@@ -495,11 +495,11 @@ OUTPUT ONLY VALID JSON:
             subprocess.run(ffmpeg_cmd, check=True)
             print(f"✅ 動画生成完了: {output_video_path}")
             
-           # self.upload_video_to_youtube(
-           #     output_video_path, 
-           #     video_title, 
-           #     video_desc
-           # )
+            self.upload_video_to_youtube(
+                output_video_path, 
+                video_title, 
+                video_desc
+            )
             return True
         except subprocess.CalledProcessError as e:
             print(f"❌ FFmpegエラー: {e}")
