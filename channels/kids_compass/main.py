@@ -7,6 +7,7 @@ import requests
 import subprocess
 import asyncio
 import shutil
+import random
 from datetime import datetime, timedelta, timezone
 from PIL import Image, ImageDraw, ImageFont
 
@@ -31,6 +32,10 @@ current_date = datetime.now(jst).strftime("%Y-%m-%d")
 TEMPLATE_DIR = "../../templates/kids_compass"
 WORKSPACE_DIR = "workspace"
 TEMP_DIR = "temp_assets"
+KNOWLEDGE_DIR = "../../knowledge/kids_compass"
+DATA_DIR = "data"
+
+os.makedirs(DATA_DIR, exist_ok=True)
 
 # 実行前にワークスペースをクリーンアップ
 if os.path.exists(WORKSPACE_DIR):
@@ -170,6 +175,130 @@ class JapanKidsCompassEngine:
         except Exception as e:
             print(f"❌ YouTubeアップロードエラー: {e}")
             return False
+    
+    def extract_knowledge_key(self, filename):
+        """
+        JKC_001_commute.mp4
+        ↓
+        commute
+        """
+
+        base = os.path.splitext(filename)[0]
+        parts = base.split("_")
+
+        if len(parts) >= 3:
+            return "_".join(parts[2:]).lower()
+
+        return base.lower()
+
+    def load_knowledge(self, knowledge_key):
+
+        knowledge_path = os.path.join(
+            KNOWLEDGE_DIR,
+            f"{knowledge_key}.json"
+        )
+
+        if not os.path.exists(knowledge_path):
+            raise FileNotFoundError(
+                f"Knowledge file not found: {knowledge_path}"
+            )
+
+        with open(
+            knowledge_path,
+            "r",
+            encoding="utf-8"
+        ) as f:
+            return json.load(f)
+
+    def choose_story_angle(self, knowledge):
+
+        angles = knowledge.get(
+            "story_angles",
+            []
+        )
+
+        if not angles:
+            return {
+                "angle": "General",
+                "path": []
+            }
+
+        return random.choice(angles)
+
+    def build_story_brief(
+        self,
+        knowledge,
+        selected_angle
+    ):
+
+        hook = random.choice(
+            knowledge.get(
+                "hook_questions",
+                ["What can children learn from everyday life?"]
+            )
+        )
+
+        topic = random.choice(
+            knowledge.get(
+                "possible_topics",
+                ["Japanese education"]
+            )
+        )
+
+        fact = random.choice(
+            knowledge.get(
+                "observable_facts",
+                []
+            )
+        )
+
+        meaning = random.choice(
+            knowledge.get(
+                "deeper_meanings",
+                []
+            )
+        )
+
+        social = random.choice(
+            knowledge.get(
+                "social_connections_extended",
+                knowledge.get(
+                    "social_connections",
+                    []
+                )
+            )
+        )
+
+        takeaway = random.choice(
+            knowledge.get(
+                "american_parent_takeaways",
+                []
+            )
+        )
+
+        outcome = random.choice(
+            knowledge.get(
+                "long_term_societal_outcomes",
+                []
+            )
+        )
+
+        return {
+            "scene": knowledge.get("scene", ""),
+            "topic": topic,
+            "hook": hook,
+            "fact": fact,
+            "meaning": meaning,
+            "social": social,
+            "takeaway": takeaway,
+            "outcome": outcome,
+            "angle": selected_angle.get("angle", "General"),
+            "path": selected_angle.get("path", []),
+            "forbidden_claims": knowledge.get(
+                "forbidden_claims",
+                []
+            )
+        }
 
     def run_rendering_pipeline(self):
         print("🎬 [Japan Kids Compass] 自動スキャンモード起動")
@@ -182,6 +311,30 @@ class JapanKidsCompassEngine:
         day_of_year = datetime.now(jst).timetuple().tm_yday
         chosen_filename = template_files[day_of_year % len(template_files)]
         theme_name = os.path.splitext(chosen_filename)[0].replace("-", " ")
+                knowledge_key = self.extract_knowledge_key(
+            chosen_filename
+        )
+
+        print(
+            f"📚 Knowledge Selected: {knowledge_key}"
+        )
+
+        knowledge = self.load_knowledge(
+            knowledge_key
+        )
+
+        selected_angle = self.choose_story_angle(
+            knowledge
+        )
+
+        story_brief = self.build_story_brief(
+            knowledge,
+            selected_angle
+        )
+
+        print(
+            f"🎯 Story Angle: {selected_angle['angle']}"
+        )
         input_template_path = os.path.join(TEMPLATE_DIR, chosen_filename)
 
         if not self.validate_template(input_template_path):
