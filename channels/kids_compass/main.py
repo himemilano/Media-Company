@@ -311,7 +311,7 @@ class JapanKidsCompassEngine:
         day_of_year = datetime.now(jst).timetuple().tm_yday
         chosen_filename = template_files[day_of_year % len(template_files)]
         theme_name = os.path.splitext(chosen_filename)[0].replace("-", " ")
-                knowledge_key = self.extract_knowledge_key(
+        knowledge_key = self.extract_knowledge_key(
             chosen_filename
         )
 
@@ -340,7 +340,7 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-                prompt = f"""
+        prompt = f"""
 You are an educational documentary storyteller.
 
 CHANNEL:
