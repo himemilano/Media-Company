@@ -117,7 +117,7 @@ class JapanKidsCompassEngine:
             return False
         async def amain():
             full_script = " . ".join(voice_texts)
-            communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="-10%")
+            communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="0%")
             await communicate.save(output_path)
         asyncio.run(amain())
         return True
@@ -394,23 +394,34 @@ IMPORTANT RULES:
 - Each slide should naturally connect to the next.
 - Target audience is American parents.
 - Show how daily habits influence long-term social outcomes.
+- This is a 30-second YouTube Short.
+- Keep narration extremely concise.
+- Each slide narration must be 8-15 words.
+- Total narration across all 5 slides must be under 80 words.
+- Screen text must be under 8 words.
+- Use short documentary-style sentences.
 
 SLIDE STRUCTURE:
 
 Slide 1:
 Hook question.
+Voice: max 15 words.
 
 Slide 2:
 Observable fact.
+Voice: max 15 words.
 
 Slide 3:
 Deeper meaning.
+Voice: max 15 words.
 
 Slide 4:
 Connection to society.
+Voice: max 15 words.
 
 Slide 5:
 Parent takeaway.
+Voice: max 15 words.
 
 OUTPUT ONLY VALID JSON:
 
