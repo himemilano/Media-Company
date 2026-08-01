@@ -120,11 +120,11 @@ class CookingWisdomEngine:
             return False
         full_script = " . ".join(voice_texts)
         
-        # 🎙️ 変更点: 落ち着いた信頼感のある男性の声（Christopher）を採用し、少しゆったりしたスピード（-5%）に調整
+        # 🎙️ 変更点: 落ち着いた信頼感のある男性の声（Christopher）を採用。
         voice = "en-US-ChristopherNeural" 
         
         async def amain():
-            communicate = edge_tts.Communicate(full_script, voice, rate="-5%")
+            communicate = edge_tts.Communicate(full_script, voice, rate="0%")
             await communicate.save(output_path)
         asyncio.run(amain())
         return True
