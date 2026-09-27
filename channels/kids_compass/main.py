@@ -113,11 +113,16 @@ class JapanKidsCompassEngine:
         img.save(output_path, "PNG")
 
     def create_narration(self, voice_texts, output_path):
+        """ナレーション生成（速度を+12%にして30秒の尺内にジャストで収める）"""
         if not TTS_AVAILABLE:
             return False
         async def amain():
-            full_script = " . ".join(voice_texts)
-            communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="0%")
+            # 文章の結合時の無駄な間合いを排除
+            cleaned_texts = [t.strip().rstrip('.') + '.' for t in voice_texts if t.strip()]
+            full_script = " ".join(cleaned_texts)
+            
+            # rate="+12%" で読み上げスピードを少しアップしテンポ感を出す
+            communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="+12%")
             await communicate.save(output_path)
         asyncio.run(amain())
         return True
@@ -157,7 +162,7 @@ class JapanKidsCompassEngine:
             "snippet": {
                 "title": title[:100],
                 "description": description,
-                "tags": ["Shorts", "Japan", "KidsCompass", "Education"],
+                "tags": ["Shorts", "Japan", "KidsCompass", "Education", "Parenting"],
                 "categoryId": "27"
             },
             "status": {
@@ -177,111 +182,40 @@ class JapanKidsCompassEngine:
             return False
     
     def extract_knowledge_key(self, filename):
-        """
-        JKC_001_commute.mp4
-        ↓
-        commute
-        """
-
         base = os.path.splitext(filename)[0]
         parts = base.split("_")
-
         if len(parts) >= 3:
             return "_".join(parts[2:]).lower()
-
         return base.lower()
 
     def load_knowledge(self, knowledge_key):
-
         knowledge_path = os.path.join(
             KNOWLEDGE_DIR,
             f"{knowledge_key}.json"
         )
-
         if not os.path.exists(knowledge_path):
             raise FileNotFoundError(
                 f"Knowledge file not found: {knowledge_path}"
             )
-
-        with open(
-            knowledge_path,
-            "r",
-            encoding="utf-8"
-        ) as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def choose_story_angle(self, knowledge):
-
-        angles = knowledge.get(
-            "story_angles",
-            []
-        )
-
+        angles = knowledge.get("story_angles", [])
         if not angles:
-            return {
-                "angle": "General",
-                "path": []
-            }
-
+            return {"angle": "General", "path": []}
         return random.choice(angles)
 
-    def build_story_brief(
-        self,
-        knowledge,
-        selected_angle
-    ):
-
-        hook = random.choice(
-            knowledge.get(
-                "hook_questions",
-                ["What can children learn from everyday life?"]
-            )
-        )
-
-        topic = random.choice(
-            knowledge.get(
-                "possible_topics",
-                ["Japanese education"]
-            )
-        )
-
-        fact = random.choice(
-            knowledge.get(
-                "observable_facts",
-                []
-            )
-        )
-
-        meaning = random.choice(
-            knowledge.get(
-                "deeper_meanings",
-                []
-            )
-        )
-
+    def build_story_brief(self, knowledge, selected_angle):
+        hook = random.choice(knowledge.get("hook_questions", ["What can children learn from everyday life?"]))
+        topic = random.choice(knowledge.get("possible_topics", ["Japanese education"]))
+        fact = random.choice(knowledge.get("observable_facts", []))
+        meaning = random.choice(knowledge.get("deeper_meanings", []))
         social = random.choice(
-            knowledge.get(
-                "social_connections_extended",
-                knowledge.get(
-                    "social_connections",
-                    []
-                )
-            )
+            knowledge.get("social_connections_extended", knowledge.get("social_connections", []))
         )
-
-        takeaway = random.choice(
-            knowledge.get(
-                "american_parent_takeaways",
-                []
-            )
-        )
-
-        outcome = random.choice(
-            knowledge.get(
-                "long_term_societal_outcomes",
-                []
-            )
-        )
+        takeaway = random.choice(knowledge.get("american_parent_takeaways", []))
+        outcome = random.choice(knowledge.get("long_term_societal_outcomes", []))
 
         return {
             "scene": knowledge.get("scene", ""),
@@ -294,10 +228,7 @@ class JapanKidsCompassEngine:
             "outcome": outcome,
             "angle": selected_angle.get("angle", "General"),
             "path": selected_angle.get("path", []),
-            "forbidden_claims": knowledge.get(
-                "forbidden_claims",
-                []
-            )
+            "forbidden_claims": knowledge.get("forbidden_claims", [])
         }
 
     def run_rendering_pipeline(self):
@@ -311,35 +242,20 @@ class JapanKidsCompassEngine:
         day_of_year = datetime.now(jst).timetuple().tm_yday
         chosen_filename = template_files[day_of_year % len(template_files)]
         theme_name = os.path.splitext(chosen_filename)[0].replace("-", " ")
-        knowledge_key = self.extract_knowledge_key(
-            chosen_filename
-        )
+        knowledge_key = self.extract_knowledge_key(chosen_filename)
 
-        print(
-            f"📚 Knowledge Selected: {knowledge_key}"
-        )
+        print(f"📚 Knowledge Selected: {knowledge_key}")
+        knowledge = self.load_knowledge(knowledge_key)
+        selected_angle = self.choose_story_angle(knowledge)
+        story_brief = self.build_story_brief(knowledge, selected_angle)
 
-        knowledge = self.load_knowledge(
-            knowledge_key
-        )
-
-        selected_angle = self.choose_story_angle(
-            knowledge
-        )
-
-        story_brief = self.build_story_brief(
-            knowledge,
-            selected_angle
-        )
-
-        print(
-            f"🎯 Story Angle: {selected_angle['angle']}"
-        )
+        print(f"🎯 Story Angle: {selected_angle['angle']}")
         input_template_path = os.path.join(TEMPLATE_DIR, chosen_filename)
 
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
+        # 💡 【プロンプトテコ入れ】語数制約を8〜11 words、全体55 words以下に超厳格化
         prompt = f"""
 You are an educational documentary storyteller.
 
@@ -347,7 +263,7 @@ CHANNEL:
 Japan Kids Compass
 
 MISSION:
-Explain how ordinary Japanese childhood experiences help develop independence, responsibility, trust, social awareness, and community participation.
+Explain how ordinary Japanese childhood experiences help develop independence, responsibility, trust, social awareness, and community safety.
 
 SCENE:
 {story_brief["scene"]}
@@ -382,46 +298,30 @@ ANGLE PATH:
 FORBIDDEN CLAIMS:
 {chr(10).join(story_brief["forbidden_claims"])}
 
-IMPORTANT RULES:
-
-- Never sound like an advertisement.
-- Never promote a product.
-- Never exaggerate.
-- Never claim Japan is perfect.
-- Never compare countries negatively.
-- Speak like a documentary narrator.
-- Focus on explaining causes and effects.
-- Each slide should naturally connect to the next.
-- Target audience is American parents.
-- Show how daily habits influence long-term social outcomes.
-- This is a 30-second YouTube Short.
-- Keep narration extremely concise.
-- Each slide narration must be 8-15 words.
-- Total narration across all 5 slides must be under 80 words.
-- Screen text must be under 8 words.
-- Use short documentary-style sentences.
+CRITICAL TIME LIMIT & LENGTH RULES (STRICT):
+- This is a EXACTLY 30-second YouTube Short (5 scenes, 6 seconds per scene).
+- The total narration MUST BE COMPLETED in under 26 seconds.
+- Each slide voice narration MUST be strictly between 8 and 11 words. (DO NOT EXCEED 11 WORDS PER SLIDE).
+- Total narration across all 5 slides MUST NOT exceed 52 words.
+- On-screen subtitle text MUST be 3 to 6 words maximum.
+- Speak in simple, impactful, documentary-style English.
 
 SLIDE STRUCTURE:
 
-Slide 1:
-Hook question.
-Voice: max 15 words.
+Slide 1: Hook Question
+Voice: 8-11 words max.
 
-Slide 2:
-Observable fact.
-Voice: max 15 words.
+Slide 2: Observable Fact
+Voice: 8-11 words max.
 
-Slide 3:
-Deeper meaning.
-Voice: max 15 words.
+Slide 3: Deeper Meaning / Social Mindset
+Voice: 8-11 words max.
 
-Slide 4:
-Connection to society.
-Voice: max 15 words.
+Slide 4: Connection to Society / Safety / Trust
+Voice: 8-11 words max.
 
-Slide 5:
-Parent takeaway.
-Voice: max 15 words.
+Slide 5: Parent Takeaway
+Voice: 8-11 words max.
 
 OUTPUT ONLY VALID JSON:
 
@@ -440,7 +340,7 @@ OUTPUT ONLY VALID JSON:
 "slide_5_voice":""
 }}
 """
-        raw_json = self.ask_gemini(prompt, "You are a YouTube expert. Output ONLY JSON.")
+        raw_json = self.ask_gemini(prompt, "You are a YouTube Shorts expert. Output ONLY valid JSON.")
         
         try:
             json_match = re.search(r'\{.*\}', raw_json, re.DOTALL)
@@ -450,9 +350,9 @@ OUTPUT ONLY VALID JSON:
             return False
 
         video_title = data.get("title", f"Japan Kids Compass: {theme_name}")
-        video_desc = data.get("description", "Discover insights into Japanese school life with Japan Kids Compass.")
+        video_desc = data.get("description", "Discover insights into Japanese parenting and social trust with Japan Kids Compass.")
 
-        # 💡 【追加機能】生成されたタイトル・概要欄・ナレーション原稿をテキストファイルに保存
+        # 生成原稿の書き出し
         script_txt_path = os.path.join(WORKSPACE_DIR, f"{current_date}_script.txt")
         with open(script_txt_path, "w", encoding="utf-8") as f:
             f.write(f"=== THEME ===\n{theme_name}\n\n")
@@ -478,6 +378,7 @@ OUTPUT ONLY VALID JSON:
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         
+        # 💡 【FFmpegテコ入れ】duration=first に変更し、音声が長くても動画枠（30秒）で切る
         filter_complex = (
             "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
             "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
@@ -486,7 +387,7 @@ OUTPUT ONLY VALID JSON:
             "[v4][5:v]overlay=0:0:enable='between(t,24,30)'[v5];"
             "[0:a]volume=0.25[bg];"  
             "[6:a]volume=1.5[voice];" 
-            "[bg][voice]amix=inputs=2:duration=longest[a]"
+            "[bg][voice]amix=inputs=2:duration=first[a]"
         )
 
         ffmpeg_cmd = ["ffmpeg", "-y", "-i", input_template_path]
@@ -497,6 +398,7 @@ OUTPUT ONLY VALID JSON:
             "-filter_complex", filter_complex, 
             "-map", "[v5]", 
             "-map", "[a]", 
+            "-t", "30",  # 動画全体の長さを確実に30秒に固定
             "-c:v", "libx264", 
             "-c:a", "aac", 
             output_video_path
