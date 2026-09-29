@@ -63,18 +63,33 @@ class JapanKidsCompassEngine:
 
     def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key:
-            return "⚠️ API KEY MISSING"
+            print("❌ エラー: 環境変数 JKC_API_KEY が設定されていません。")
+            return None
+            
         headers = {"Content-Type": "application/json"}
         combined_prompt = f"[Role Instruction]\n{system_instruction}\n\n[Task]\n{prompt}" if system_instruction else prompt
         payload = {"contents": [{"parts": [{"text": combined_prompt}]}]}
         url = f"{self.base_url}?key={self.api_key}"
-        try:
-            res = requests.post(url, headers=headers, json=payload, timeout=60)
-            if res.status_code == 200:
-                return res.json()["candidates"][0]["content"]["parts"][0]["text"]
-        except Exception as e:
-            print(f"Gemini Error: {e}")
-        return "⚠️ API ERROR"
+        
+        for delay in [1, 2, 4]:
+            try:
+                res = requests.post(url, headers=headers, json=payload, timeout=60)
+                if res.status_code == 200:
+                    data = res.json()
+                    try:
+                        return data["candidates"][0]["content"]["parts"][0]["text"]
+                    except (KeyError, IndexError) as e:
+                        print(f"❌ Gemini API レスポンス解析エラー: {e}")
+                        print(f"🔍 受信データ: {data}")
+                        return None
+                else:
+                    print(f"❌ Gemini API エラー (Status: {res.status_code}): {res.text}")
+                    time.sleep(delay)
+            except Exception as e:
+                print(f"⚠️ 通信エラー: {e}")
+                time.sleep(delay)
+                
+        return None
 
     def generate_subtitle_image(self, text, output_path, width=1080, height=1920):
         img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
@@ -117,11 +132,9 @@ class JapanKidsCompassEngine:
         if not TTS_AVAILABLE:
             return False
         async def amain():
-            # 文章の結合時の無駄な間合いを排除
             cleaned_texts = [t.strip().rstrip('.') + '.' for t in voice_texts if t.strip()]
             full_script = " ".join(cleaned_texts)
             
-            # rate="+12%" で読み上げスピードを少しアップしテンポ感を出す
             communicate = edge_tts.Communicate(full_script, "en-US-EmmaNeural", rate="+12%")
             await communicate.save(output_path)
         asyncio.run(amain())
@@ -193,12 +206,20 @@ class JapanKidsCompassEngine:
             KNOWLEDGE_DIR,
             f"{knowledge_key}.json"
         )
-        if not os.path.exists(knowledge_path):
-            raise FileNotFoundError(
-                f"Knowledge file not found: {knowledge_path}"
-            )
-        with open(knowledge_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        if os.path.exists(knowledge_path):
+            with open(knowledge_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+
+        print(f"⚠️ ナレッジファイルが見つかりません: {knowledge_path}")
+        if os.path.exists(KNOWLEDGE_DIR):
+            json_files = [f for f in os.listdir(KNOWLEDGE_DIR) if f.endswith(".json")]
+            if json_files:
+                fallback_path = os.path.join(KNOWLEDGE_DIR, json_files[0])
+                print(f"🔄 代替ナレッジファイルを使用します: {fallback_path}")
+                with open(fallback_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        raise FileNotFoundError(f"Knowledge file not found: {knowledge_path}")
 
     def choose_story_angle(self, knowledge):
         angles = knowledge.get("story_angles", [])
@@ -255,7 +276,6 @@ class JapanKidsCompassEngine:
         if not self.validate_template(input_template_path):
             sys.exit(1)
 
-        # 💡 【プロンプトテコ入れ】語数制約を8〜11 words、全体55 words以下に超厳格化
         prompt = f"""
 You are an educational documentary storyteller.
 
@@ -342,11 +362,17 @@ OUTPUT ONLY VALID JSON:
 """
         raw_json = self.ask_gemini(prompt, "You are a YouTube Shorts expert. Output ONLY valid JSON.")
         
+        if not raw_json:
+            print("❌ Gemini APIからの応答取得に失敗したため処理を停止します。")
+            return False
+
         try:
-            json_match = re.search(r'\{.*\}', raw_json, re.DOTALL)
-            data = json.loads(json_match.group(0)) if json_match else json.loads(raw_json)
+            clean_json = re.sub(r'```json\s*|\s*```', '', raw_json).strip()
+            json_match = re.search(r'\{.*\}', clean_json, re.DOTALL)
+            data = json.loads(json_match.group(0)) if json_match else json.loads(clean_json)
         except Exception as e:
-            print(f"JSON Error: {e}")
+            print(f"❌ JSONパースエラー: {e}")
+            print(f"🔍 受け取った生データ:\n{raw_json}")
             return False
 
         video_title = data.get("title", f"Japan Kids Compass: {theme_name}")
@@ -378,7 +404,6 @@ OUTPUT ONLY VALID JSON:
 
         output_video_path = os.path.join(WORKSPACE_DIR, f"{current_date}_completed.mp4")
         
-        # 💡 【FFmpegテコ入れ】duration=first に変更し、音声が長くても動画枠（30秒）で切る
         filter_complex = (
             "[0:v][1:v]overlay=0:0:enable='between(t,0,6)'[v1];"
             "[v1][2:v]overlay=0:0:enable='between(t,6,12)'[v2];"
@@ -398,7 +423,7 @@ OUTPUT ONLY VALID JSON:
             "-filter_complex", filter_complex, 
             "-map", "[v5]", 
             "-map", "[a]", 
-            "-t", "30",  # 動画全体の長さを確実に30秒に固定
+            "-t", "30", 
             "-c:v", "libx264", 
             "-c:a", "aac", 
             output_video_path
@@ -419,7 +444,7 @@ OUTPUT ONLY VALID JSON:
             return False
 
 if __name__ == "__main__":
-    api_key = os.environ.get("GEMINI_API_KEY_MEDIA")
+    api_key = os.environ.get("JKC_API_KEY")
     engine = JapanKidsCompassEngine(api_key)
     success = engine.run_rendering_pipeline()
     if not success:
