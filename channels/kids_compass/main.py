@@ -48,7 +48,7 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 class JapanKidsCompassEngine:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
 
     def validate_template(self, path):
         """動画ファイルがLFSポインタ（数KB）ではなく実体（MB単位）かを確認"""
