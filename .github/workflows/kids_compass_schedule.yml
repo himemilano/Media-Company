@@ -41,7 +41,7 @@ jobs:
 
     - name: Run Auto Video Generator
       env:
-        GEMINI_API_KEY_MEDIA: ${{ secrets.JKC_API_KEY }}
+        JKC_API_KEY: ${{ secrets.JKC_API_KEY }}
         KIDS_YOUTUBE_CLIENT_ID: ${{ secrets.KIDS_YOUTUBE_CLIENT_ID }}
         KIDS_YOUTUBE_CLIENT_SECRET: ${{ secrets.KIDS_YOUTUBE_CLIENT_SECRET }}
         KIDS_YOUTUBE_REFRESH_TOKEN: ${{ secrets.KIDS_YOUTUBE_REFRESH_TOKEN }}
