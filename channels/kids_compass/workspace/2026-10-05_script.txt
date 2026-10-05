@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_006_library
+
+=== TITLE ===
+How School Libraries Teach Social Respect
+
+=== DESCRIPTION ===
+Discover how Japanese elementary school libraries serve as miniature models of society, teaching children everyday respect and public awareness.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Reading time builds social skills
+  Narration (Voice): What if everyday reading time was actually training for society?
+
+[Slide 2]
+  Subtitle (Screen Text): Following rules for shared books
+  Narration (Voice): Students borrow and return shared books using clearly established rules.
+
+[Slide 3]
+  Subtitle (Screen Text): Respect becomes a daily habit
+  Narration (Voice): Respecting community resources slowly becomes an automatic daily habit.
+
+[Slide 4]
+  Subtitle (Screen Text): A miniature model of society
+  Narration (Voice): This quiet space serves as a miniature model of society.
+
+[Slide 5]
+  Subtitle (Screen Text): Teaching consideration in shared spaces
+  Narration (Voice): Shared environments offer perfect opportunities to teach lasting public consideration.
+
