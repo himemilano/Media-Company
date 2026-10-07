@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_007_sports_day
+
+=== TITLE ===
+How Japanese School Libraries Teach Self-Discipline #shorts
+
+=== DESCRIPTION ===
+Discover how shared quiet spaces in Japanese school libraries help children build self-control, consider others, and respect public spaces.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): How libraries shape public habits
+  Narration (Voice): How can a quiet school library shape lifelong public behavior?
+
+[Slide 2]
+  Subtitle (Screen Text): Sharing spaces with mutual care
+  Narration (Voice): In elementary school, children practice sharing calm spaces with others.
+
+[Slide 3]
+  Subtitle (Screen Text): Practicing quiet respect for strangers
+  Narration (Voice): Lowering their voices teaches young students mindful consideration for strangers.
+
+[Slide 4]
+  Subtitle (Screen Text): Discipline transfers to public life
+  Narration (Voice): This early discipline helps kids respect crowded trains and parks.
+
+[Slide 5]
+  Subtitle (Screen Text): Shared rules protect personal freedom
+  Narration (Voice): Shared rules protect everyone’s freedom to learn and thrive together.
+
