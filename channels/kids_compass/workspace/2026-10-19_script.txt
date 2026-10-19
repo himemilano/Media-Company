@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_009_disaster_preparedness
+
+=== TITLE ===
+Can Trust Make Communities Safer? | Japan Kids Compass
+
+=== DESCRIPTION ===
+Discover how shared community responsibility and daily interactions in Japanese neighborhoods foster trust and keep children safe.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Can trust build safer neighborhoods?
+  Narration (Voice): Can everyday trust actually make our local communities much safer?
+
+[Slide 2]
+  Subtitle (Screen Text): Neighbors watching over walking children.
+  Narration (Voice): Across Japan, local volunteers regularly watch children walking to school.
+
+[Slide 3]
+  Subtitle (Screen Text): Safety depends on active participation.
+  Narration (Voice): Kids learn that real safety comes from participation, not rules.
+
+[Slide 4]
+  Subtitle (Screen Text): Daily greetings build lasting trust.
+  Narration (Voice): Daily greetings reduce isolation and steadily build lasting social trust.
+
+[Slide 5]
+  Subtitle (Screen Text): Shared care strengthens any neighborhood.
+  Narration (Voice): Sharing responsibility for children can strengthen any neighborhood anywhere today.
+
