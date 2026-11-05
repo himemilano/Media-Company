@@ -33,6 +33,7 @@ current_date = datetime.now(jst).strftime("%Y-%m-%d")
 TEMPLATE_DIR = "../../templates/cooking_wisdom"  
 WORKSPACE_DIR = "workspace"      
 TEMP_DIR = "temp_assets"
+KNOWLEDGE_DIR = "../../knowledge/cooking_wisdom"
 
 os.makedirs(WORKSPACE_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
@@ -40,7 +41,8 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 class CookingWisdomEngine:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
+        # ※ gemini-2.5-flash は新規プロジェクトでは利用不可（廃止）のため、現行の gemini-3.8-flash を使う
+        self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
 
     def ask_gemini(self, prompt, system_instruction=""):
         if not self.api_key: return "⚠️ API KEY MISSING"
@@ -51,28 +53,64 @@ class CookingWisdomEngine:
         payload = {
             "contents": [{"parts": [{"text": combined_prompt}]}]
         }
-        url = f"{self.base_url}?key={self.api_key}"
         # 503（需要スパイク）や429は数分続くことがあるため、分単位のバックオフで粘る。
+        # メインモデルが長時間応答しない場合は予備モデル（gemini-3.6-flash）に切り替える。
         # 400/401/403 等のリトライで直らないエラーは即終了する。
-        retry_delays = [30, 60, 120, 240]
-        attempts = len(retry_delays) + 1
-        for attempt in range(attempts):
-            try:
-                res = requests.post(url, headers=headers, json=payload, timeout=60)
-                if res.status_code == 200:
-                    return res.json()["candidates"][0]["content"]["parts"][0]["text"]
-                else:
-                    print(f"⚠️ Gemini API Status Code: {res.status_code}")
-                    print(f"⚠️ Gemini Error Response: {res.text}")
-                    if res.status_code not in (429, 500, 503):
-                        return "⚠️ API ERROR"
-            except Exception as e:
-                print(f"⚠️ Gemini Connection Error: {e}")
-            if attempt < len(retry_delays):
-                wait = retry_delays[attempt]
-                print(f"⏳ {wait}秒待って再試行します ({attempt + 1}/{attempts})")
-                time.sleep(wait)
+        retry_delays = [30, 60, 120]
+        endpoints = [
+            ("gemini-3.8-flash", self.base_url),
+            ("gemini-3.6-flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"),
+        ]
+        for model_name, base_url in endpoints:
+            url = f"{base_url}?key={self.api_key}"
+            attempts = len(retry_delays) + 1
+            for attempt in range(attempts):
+                try:
+                    res = requests.post(url, headers=headers, json=payload, timeout=90)
+                    if res.status_code == 200:
+                        return res.json()["candidates"][0]["content"]["parts"][0]["text"]
+                    else:
+                        print(f"⚠️ Gemini API Status Code ({model_name}): {res.status_code}")
+                        print(f"⚠️ Gemini Error Response: {res.text}")
+                        if res.status_code not in (429, 500, 503):
+                            return "⚠️ API ERROR"
+                except Exception as e:
+                    print(f"⚠️ Gemini Connection Error ({model_name}): {e}")
+                if attempt < len(retry_delays):
+                    wait = retry_delays[attempt]
+                    print(f"⏳ {wait}秒待って再試行します ({model_name}: {attempt + 1}/{attempts})")
+                    time.sleep(wait)
+            print(f"🔄 {model_name} が応答しないため、予備モデルに切り替えます")
         return "⚠️ API ERROR"
+
+    def load_knowledge(self, knowledge_key):
+        """knowledge/cooking_wisdom/<key>.json を読み込む。なければ None を返し、テーマのみで生成する"""
+        knowledge_path = os.path.join(KNOWLEDGE_DIR, f"{knowledge_key}.json")
+        if os.path.exists(knowledge_path):
+            with open(knowledge_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        print(f"⚠️ ナレッジファイルが見つかりません: {knowledge_path}（テーマのみで生成します）")
+        return None
+
+    def build_knowledge_block(self, knowledge):
+        """プロンプトに埋め込む素材事実ブロックを組み立てる"""
+        if not knowledge:
+            return ""
+        lines = ["[KNOWLEDGE - base the script ONLY on these facts, rephrased in your own words]"]
+        for label, key in [
+            ("Core principles", "core_principles"),
+            ("Key facts", "key_facts"),
+            ("Practical steps", "practical_steps"),
+            ("Common mistakes to warn about", "common_mistakes"),
+            ("Hook question ideas", "hook_questions"),
+            ("Viewer takeaways", "viewer_takeaways"),
+            ("FORBIDDEN", "forbidden_claims"),
+        ]:
+            items = knowledge.get(key, [])
+            if items:
+                lines.append(f"{label}:")
+                lines.extend(f"- {item}" for item in items)
+        return "\n".join(lines)
 
     def generate_cooking_gradient_placeholder(self, width=1080, height=1920):
         img = Image.new("RGB", (width, height), (54, 31, 20)) 
@@ -213,6 +251,24 @@ class CookingWisdomEngine:
         concept_idx = (day_of_year % len(cooking_concepts)) + 1
         chosen = cooking_concepts[concept_idx]
 
+        # テンプレートに対応する Knowledge（素材データベース由来の事実集）を読み込む
+        knowledge_keys = {
+            "JCW_001_The_Science_of_Dashi.mp4": "dashi",
+            "JCW_002_The_Magic_of_Prep_Work.mp4": "prep_work",
+            "JCW_003_The_Truth_About_Flash_Freezing.mp4": "flash_freezing",
+            "JCW_004_Layering_Spices_Like_a_Pro.mp4": "layering_spices",
+            "JCW_005_Perfect_Rice_Every_Time.mp4": "rice",
+            "JCW_006_The_Sa-Shi-Su-Se-So_Order_Explained.mp4": "seasoning_order",
+            "JCW_007_Better_Than_Fresh_Frozen_Veggies_and_Fish.mp4": "frozen_vegetables_fish",
+            "JCW_008_Curry_Without_Roux.mp4": "curry_without_roux",
+            "JCW_009_Mastering_Oil_Temperature.mp4": "oil_temperature",
+            "JCW_010_Freezing_to_Lock_in_Umami.mp4": "freezing_umami",
+        }
+        knowledge = self.load_knowledge(knowledge_keys.get(chosen["filename"], ""))
+        knowledge_block = self.build_knowledge_block(knowledge)
+        if knowledge:
+            print(f"📚 Knowledge Loaded: {knowledge_keys.get(chosen['filename'])}")
+
         input_template_path = os.path.join(TEMPLATE_DIR, chosen["filename"])
 
         if not os.path.exists(input_template_path):
@@ -228,7 +284,12 @@ class CookingWisdomEngine:
         prompt = f"""
 Create an engaging YouTube Short title, description, 5 short subtitles AND 5 matching spoken narration scripts about cooking.
 [TOPIC]: "{chosen['theme']}"
+
+{knowledge_block}
+
 [RULES]: 
+- Ground every factual claim in the KNOWLEDGE section above. Rephrase in your own words; never copy sentences verbatim, and never invent facts, numbers, or health effects that are not in the KNOWLEDGE section.
+- Respect every FORBIDDEN item in the KNOWLEDGE section.
 - Provide a catchy YouTube title (max 100 chars).
 - Provide a rich English description with hashtags.
 - Subtitles under 8 words. 
