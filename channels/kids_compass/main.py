@@ -72,30 +72,38 @@ class JapanKidsCompassEngine:
         url = f"{self.base_url}?key={self.api_key}"
         
         # 503（需要スパイク）や429は数分続くことがあるため、分単位のバックオフで粘る。
+        # メインモデルが長時間応答しない場合は予備モデル（gemini-2.5-flash）に切り替える。
         # 400/401/403 等のリトライで直らないエラーは即終了する。
-        retry_delays = [30, 60, 120, 240]
-        attempts = len(retry_delays) + 1
-        for attempt in range(attempts):
-            try:
-                res = requests.post(url, headers=headers, json=payload, timeout=60)
-                if res.status_code == 200:
-                    data = res.json()
-                    try:
-                        return data["candidates"][0]["content"]["parts"][0]["text"]
-                    except (KeyError, IndexError) as e:
-                        print(f"❌ Gemini API レスポンス解析エラー: {e}")
-                        print(f"🔍 受信データ: {data}")
-                        return None
-                else:
-                    print(f"❌ Gemini API エラー (Status: {res.status_code}): {res.text}")
-                    if res.status_code not in (429, 500, 503):
-                        return None
-            except Exception as e:
-                print(f"⚠️ 通信エラー: {e}")
-            if attempt < len(retry_delays):
-                wait = retry_delays[attempt]
-                print(f"⏳ {wait}秒待って再試行します ({attempt + 1}/{attempts})")
-                time.sleep(wait)
+        retry_delays = [30, 60, 120]
+        endpoints = [
+            ("gemini-3.8-flash", self.base_url),
+            ("gemini-2.5-flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"),
+        ]
+        for model_name, base_url in endpoints:
+            url = f"{base_url}?key={self.api_key}"
+            attempts = len(retry_delays) + 1
+            for attempt in range(attempts):
+                try:
+                    res = requests.post(url, headers=headers, json=payload, timeout=90)
+                    if res.status_code == 200:
+                        data = res.json()
+                        try:
+                            return data["candidates"][0]["content"]["parts"][0]["text"]
+                        except (KeyError, IndexError) as e:
+                            print(f"❌ Gemini API レスポンス解析エラー: {e}")
+                            print(f"🔍 受信データ: {data}")
+                            return None
+                    else:
+                        print(f"❌ Gemini API エラー ({model_name}, Status: {res.status_code}): {res.text}")
+                        if res.status_code not in (429, 500, 503):
+                            return None
+                except Exception as e:
+                    print(f"⚠️ 通信エラー ({model_name}): {e}")
+                if attempt < len(retry_delays):
+                    wait = retry_delays[attempt]
+                    print(f"⏳ {wait}秒待って再試行します ({model_name}: {attempt + 1}/{attempts})")
+                    time.sleep(wait)
+            print(f"🔄 {model_name} が応答しないため、予備モデルに切り替えます")
 
         return None
 
