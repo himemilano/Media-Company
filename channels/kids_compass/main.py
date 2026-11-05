@@ -72,12 +72,13 @@ class JapanKidsCompassEngine:
         url = f"{self.base_url}?key={self.api_key}"
         
         # 503（需要スパイク）や429は数分続くことがあるため、分単位のバックオフで粘る。
-        # メインモデルが長時間応答しない場合は予備モデル（gemini-2.5-flash）に切り替える。
+        # メインモデルが長時間応答しない場合は予備モデル（gemini-3.6-flash）に切り替える。
+        # ※ gemini-2.5-flash は新規プロジェクトでは利用不可（廃止）のため使わない。
         # 400/401/403 等のリトライで直らないエラーは即終了する。
         retry_delays = [30, 60, 120]
         endpoints = [
             ("gemini-3.8-flash", self.base_url),
-            ("gemini-2.5-flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"),
+            ("gemini-3.6-flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"),
         ]
         for model_name, base_url in endpoints:
             url = f"{base_url}?key={self.api_key}"
