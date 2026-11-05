@@ -52,7 +52,11 @@ class CookingWisdomEngine:
             "contents": [{"parts": [{"text": combined_prompt}]}]
         }
         url = f"{self.base_url}?key={self.api_key}"
-        for delay in [1, 2, 4]:
+        # 503（需要スパイク）や429は数分続くことがあるため、分単位のバックオフで粘る。
+        # 400/401/403 等のリトライで直らないエラーは即終了する。
+        retry_delays = [30, 60, 120, 240]
+        attempts = len(retry_delays) + 1
+        for attempt in range(attempts):
             try:
                 res = requests.post(url, headers=headers, json=payload, timeout=60)
                 if res.status_code == 200:
@@ -60,10 +64,14 @@ class CookingWisdomEngine:
                 else:
                     print(f"⚠️ Gemini API Status Code: {res.status_code}")
                     print(f"⚠️ Gemini Error Response: {res.text}")
-                    time.sleep(delay)
+                    if res.status_code not in (429, 500, 503):
+                        return "⚠️ API ERROR"
             except Exception as e:
                 print(f"⚠️ Gemini Connection Error: {e}")
-                time.sleep(delay)
+            if attempt < len(retry_delays):
+                wait = retry_delays[attempt]
+                print(f"⏳ {wait}秒待って再試行します ({attempt + 1}/{attempts})")
+                time.sleep(wait)
         return "⚠️ API ERROR"
 
     def generate_cooking_gradient_placeholder(self, width=1080, height=1920):
@@ -130,9 +138,10 @@ class CookingWisdomEngine:
         return True
 
     def get_youtube_service(self):
-        client_id = os.environ.get("COOKING_YOUTUBE_CLIENT_ID")
-        client_secret = os.environ.get("COOKING_YOUTUBE_CLIENT_SECRET")
-        refresh_token = os.environ.get("COOKING_YOUTUBE_REFRESH_TOKEN")
+        # ワークフロー（cooking_wisdom_schedule.yml）の env 名に合わせる
+        client_id = os.environ.get("YOUTUBE_CLIENT_ID")
+        client_secret = os.environ.get("YOUTUBE_CLIENT_SECRET")
+        refresh_token = os.environ.get("YOUTUBE_REFRESH_TOKEN")
         if not (client_id and client_secret and refresh_token):
             return None
         creds = google.oauth2.credentials.Credentials(
@@ -186,16 +195,18 @@ class CookingWisdomEngine:
     def run_rendering_pipeline(self):
         print("🎬 [Cooking Wisdom] レンダーパイプライン始動")
 
+        # テンプレート実ファイル（templates/cooking_wisdom/）に対応させたテーマ表
         cooking_concepts = {
-            1: {"filename": "JCW-A-Umami-v1.mp4", "theme": "The hidden power of Umami in traditional Japanese cuisine."},
-            2: {"filename": "JCW-B-Rice-v1.mp4", "theme": "The ultimate secret to perfectly washing and cooking sushi rice."},
-            3: {"filename": "JCW-C-Dashi-v1.mp4", "theme": "How Japanese Dashi creates deep flavor in just 10 minutes."},
-            4: {"filename": "JCW-D-Miso-v1.mp4", "theme": "The incredible health benefits of eating Miso soup every day."},
-            5: {"filename": "JCW-E-Knives-v1.mp4", "theme": "Why Japanese chef knives are trusted by professionals worldwide."},
-            6: {"filename": "JCW-F-Mottainai-v1.mp4", "theme": "The beautiful philosophy of 'Mottainai' in zero-waste Japanese cooking."},
-            7: {"filename": "JCW-G-Tempura-v1.mp4", "theme": "Science secrets to making perfectly crispy Japanese Tempura."},
-            8: {"filename": "JCW-H-Breakfast-v1.mp4", "theme": "Inside a traditional Japanese breakfast: Balance and longevity."},
-            9: {"filename": "JCW-J-GreenTea-v1.mp4", "theme": "The art of pairing authentic green tea with Japanese sweets."}
+            1: {"filename": "JCW_001_The_Science_of_Dashi.mp4", "theme": "The science of dashi: how kombu glutamates and bonito inosinates multiply umami, and why Japanese chefs never boil kombu."},
+            2: {"filename": "JCW_002_The_Magic_of_Prep_Work.mp4", "theme": "The magic of prep work (shikomi): why Japanese chefs finish most of the cooking before any heat is applied."},
+            3: {"filename": "JCW_003_The_Truth_About_Flash_Freezing.mp4", "theme": "The truth about flash freezing: fast freezing keeps ice crystals small, so cells survive and texture stays close to fresh."},
+            4: {"filename": "JCW_004_Layering_Spices_Like_a_Pro.mp4", "theme": "Layering spices like a pro: the science of adding spices in stages, developed by some of Japan's brightest young curry researchers."},
+            5: {"filename": "JCW_005_Perfect_Rice_Every_Time.mp4", "theme": "Perfect rice every time: washing, soaking, and resting - the three steps Japanese chefs never skip."},
+            6: {"filename": "JCW_006_The_Sa-Shi-Su-Se-So_Order_Explained.mp4", "theme": "The sa-shi-su-se-so order explained: why Japanese seasoning sequence (sugar, salt, vinegar, soy sauce, miso) changes the final flavor."},
+            7: {"filename": "JCW_007_Better_Than_Fresh_Frozen_Veggies_and_Fish.mp4", "theme": "Better than fresh: how vegetables and fish frozen at peak season can beat out-of-season 'fresh', and how to thaw them properly."},
+            8: {"filename": "JCW_008_Curry_Without_Roux.mp4", "theme": "Curry without roux: building deep Japanese curry flavor from spices, dashi, and grated vegetables alone."},
+            9: {"filename": "JCW_009_Mastering_Oil_Temperature.mp4", "theme": "Mastering oil temperature: reading bubbles and chopstick tests - the science of crispy tempura and fried chicken skin."},
+            10: {"filename": "JCW_010_Freezing_to_Lock_in_Umami.mp4", "theme": "Freezing to lock in umami: how freezing mushrooms and other ingredients breaks cell walls and can actually deepen flavor."}
         }
 
         day_of_year = datetime.now(jst).timetuple().tm_yday
