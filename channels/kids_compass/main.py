@@ -71,7 +71,11 @@ class JapanKidsCompassEngine:
         payload = {"contents": [{"parts": [{"text": combined_prompt}]}]}
         url = f"{self.base_url}?key={self.api_key}"
         
-        for delay in [1, 2, 4]:
+        # 503（需要スパイク）や429は数分続くことがあるため、分単位のバックオフで粘る。
+        # 400/401/403 等のリトライで直らないエラーは即終了する。
+        retry_delays = [30, 60, 120, 240]
+        attempts = len(retry_delays) + 1
+        for attempt in range(attempts):
             try:
                 res = requests.post(url, headers=headers, json=payload, timeout=60)
                 if res.status_code == 200:
@@ -84,11 +88,15 @@ class JapanKidsCompassEngine:
                         return None
                 else:
                     print(f"❌ Gemini API エラー (Status: {res.status_code}): {res.text}")
-                    time.sleep(delay)
+                    if res.status_code not in (429, 500, 503):
+                        return None
             except Exception as e:
                 print(f"⚠️ 通信エラー: {e}")
-                time.sleep(delay)
-                
+            if attempt < len(retry_delays):
+                wait = retry_delays[attempt]
+                print(f"⏳ {wait}秒待って再試行します ({attempt + 1}/{attempts})")
+                time.sleep(wait)
+
         return None
 
     def generate_subtitle_image(self, text, output_path, width=1080, height=1920):
