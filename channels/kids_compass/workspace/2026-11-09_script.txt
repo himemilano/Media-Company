@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_005_physical_activity
+
+=== TITLE ===
+How Japanese PE Teaches Respect and Resilience
+
+=== DESCRIPTION ===
+Discover how traditional physical education activities in Japan help children handle frustration, build mutual respect, and learn that real growth takes time.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Exercise prepares kids for life
+  Narration (Voice): Can exercise prepare children for life’s unexpected daily challenges?
+
+[Slide 2]
+  Subtitle (Screen Text): Activities adapt to every child
+  Narration (Voice): Schools adapt physical activities to fit different ages and abilities.
+
+[Slide 3]
+  Subtitle (Screen Text): Handling frustration through physical practice
+  Narration (Voice): Traditional movement teaches kids to handle personal frustration constructively.
+
+[Slide 4]
+  Subtitle (Screen Text): Shared rules build group respect
+  Narration (Voice): Clear safety rules build deep respect and stronger group culture.
+
+[Slide 5]
+  Subtitle (Screen Text): Real growth takes patient time
+  Narration (Voice): Children gain resilience by learning that real improvement takes time.
+
