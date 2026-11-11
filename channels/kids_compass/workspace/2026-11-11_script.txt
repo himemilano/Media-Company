@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_004_cleaning
+
+=== TITLE ===
+Why Japanese Students Clean Their Own Schools
+
+=== DESCRIPTION ===
+Discover how daily school cleaning in Japan teaches personal accountability and fosters lasting social trust.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): How cleaning builds responsibility
+  Narration (Voice): Can daily classroom cleaning quietly shape a more responsible society?
+
+[Slide 2]
+  Subtitle (Screen Text): Daily school cleaning routine
+  Narration (Voice): In Japan, young students clean their own classrooms every day.
+
+[Slide 3]
+  Subtitle (Screen Text): Action teaches true accountability
+  Narration (Voice): Daily shared actions teach personal accountability better than simple lectures.
+
+[Slide 4]
+  Subtitle (Screen Text): Respect builds social trust
+  Narration (Voice): Caring for shared spaces nurtures public trust into adulthood.
+
+[Slide 5]
+  Subtitle (Screen Text): Maintenance creates real appreciation
+  Narration (Voice): Children naturally value spaces more when they maintain them.
+
