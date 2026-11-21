@@ -1,0 +1,28 @@
+# JCW の YouTube 認証だけを切り分けて確認するための手動専用ワークフロー。
+# 本体の動画生成は行わず、保存済みシークレットで refresh が通るかだけを見る。
+# トークン等の値そのものはログに出さない（長さと先頭4文字のみ）。
+
+on:
+  workflow_dispatch:
+
+jobs:
+  token-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check refresh token against Google token endpoint
+        env:
+          CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN_JCW }}
+        run: |
+          echo "client_id length: ${#CLIENT_ID}"
+          echo "client_secret length: ${#CLIENT_SECRET}"
+          echo "refresh_token length: ${#REFRESH_TOKEN}"
+          echo "refresh_token first4: ${REFRESH_TOKEN:0:4}"
+          RESPONSE=$(curl -s -w $'\nHTTP_STATUS:%{http_code}' -X POST https://oauth2.googleapis.com/token \
+            -d "client_id=${CLIENT_ID}" \
+            -d "client_secret=${CLIENT_SECRET}" \
+            -d "refresh_token=${REFRESH_TOKEN}" \
+            -d "grant_type=refresh_token")
+          echo "---- token endpoint response ----"
+          echo "$RESPONSE"
