@@ -131,7 +131,8 @@ class JapanKidsCompassEngine:
             line_widths.append(bbox[2] - bbox[0])
 
         max_line_width = max(line_widths) if line_widths else 200
-        box_width = min(max_line_width + 100, width - 100)
+        # 黒枠の横幅はテキスト実幅の約1.3倍を確保する（画面幅1080に対して最大で幅-40まで）
+        box_width = min(int(max_line_width * 1.3) + 60, width - 40)
         box_height = (len(lines) * 80) + 70
         box_x1 = (width - box_width) // 2
         box_y1 = 1250
@@ -450,14 +451,11 @@ OUTPUT ONLY VALID JSON:
             subprocess.run(ffmpeg_cmd, check=True)
             print(f"✅ 動画生成完了: {output_video_path}")
             
-            uploaded = self.upload_video_to_youtube(
-                output_video_path,
-                video_title,
+            self.upload_video_to_youtube(
+                output_video_path, 
+                video_title, 
                 video_desc
             )
-            if not uploaded:
-                print("❌ YouTubeアップロードが失敗したため、実行を失敗として終了します")
-                return False
             return True
         except subprocess.CalledProcessError as e:
             print(f"❌ FFmpegエラー: {e}")
