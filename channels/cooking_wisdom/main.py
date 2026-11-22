@@ -136,26 +136,36 @@ class CookingWisdomEngine:
                 break
         if not font: font = ImageFont.load_default()
 
+        # 字幕の折り返しは文字数ではなく実測幅で行う。
+        # （従来の「1文字=26px」概算は実際の文字幅より小さく、字幕が黒枠からはみ出していた）
+        def text_width(s):
+            bbox = draw.textbbox((0, 0), s, font=font)
+            return bbox[2] - bbox[0]
+
+        max_text_width = 940
         words = text.split()
         lines, current_line = [], []
         for word in words:
-            current_line.append(word)
-            if len(" ".join(current_line)) > 18:
-                current_line.pop()
+            trial = " ".join(current_line + [word])
+            if current_line and text_width(trial) > max_text_width:
                 lines.append(" ".join(current_line))
                 current_line = [word]
+            else:
+                current_line.append(word)
         if current_line: lines.append(" ".join(current_line))
-        
+
         box_padding, line_height = 24, 65
-        max_line_width = max([len(line) * 26 for line in lines]) if lines else 300
-        box_width = min(max_line_width + box_padding * 2, 980)
+        line_widths = [text_width(line) for line in lines]
+        max_line_width = max(line_widths) if line_widths else 300
+        # 黒枠の横幅はテキスト実幅の約1.3倍を確保する（画面幅1080に対して最大1040まで）
+        box_width = min(int(max_line_width * 1.3) + box_padding * 2, width - 40)
         box_height = (len(lines) * line_height) + box_padding * 2
         box_x1, box_y1 = (width - box_width) // 2, 1300
         box_x2, box_y2 = box_x1 + box_width, box_y1 + box_height
 
         draw.rounded_rectangle([box_x1, box_y1, box_x2, box_y2], radius=15, fill=(28, 18, 14, 220))
-        for idx, line in enumerate(lines[:2]):
-            text_x = (width - (len(line) * 26)) // 2
+        for idx, line in enumerate(lines):
+            text_x = box_x1 + (box_width - line_widths[idx]) // 2
             text_y = box_y1 + box_padding + (idx * line_height)
             draw.text((text_x, text_y), line, fill=(255, 248, 240), font=font)
         img.save(output_path, "PNG")
