@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_003_lunch
+
+=== TITLE ===
+Can Food Teach Kids Responsibility? | Japan Kids Compass
+
+=== DESCRIPTION ===
+Discover how daily school lunch duties in Japan help children build community, gratitude, and social responsibility from a young age.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Can food reduce wasteful daily habits?
+  Narration (Voice): Can serving shared meals teach children to reduce wasteful habits?
+
+[Slide 2]
+  Subtitle (Screen Text): School lunches focus on balanced nutrition.
+  Narration (Voice): In Japan, school lunches are carefully planned for balanced nutrition.
+
+[Slide 3]
+  Subtitle (Screen Text): Food comes from many helping hands.
+  Narration (Voice): Serving each other shows children how many people prepare food.
+
+[Slide 4]
+  Subtitle (Screen Text): Shared meals build stronger local communities.
+  Narration (Voice): Sharing daily meal duties builds strong connections within the community.
+
+[Slide 5]
+  Subtitle (Screen Text): Gratitude grows through simple daily habits.
+  Narration (Voice): Daily habits help children build lifelong gratitude for their food.
+
