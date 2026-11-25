@@ -1,0 +1,30 @@
+=== THEME ===
+JKC_006_library
+
+=== TITLE ===
+What Hidden Lesson Exists in Quiet Spaces?
+
+=== DESCRIPTION ===
+Discover how learning quiet library habits in Japanese elementary schools fosters empathy, consideration for strangers, and peaceful public communities.
+
+=== SUBTITLES & NARRATION SCRIPTS ===
+[Slide 1]
+  Subtitle (Screen Text): Hidden lessons in quiet rooms
+  Narration (Voice): What valuable lesson is hidden inside a quiet school library?
+
+[Slide 2]
+  Subtitle (Screen Text): Learning shared space etiquette early
+  Narration (Voice): Japanese students learn shared space etiquette from an early age.
+
+[Slide 3]
+  Subtitle (Screen Text): Consideration for those around us
+  Narration (Voice): Staying quiet shows direct consideration for people sharing the room.
+
+[Slide 4]
+  Subtitle (Screen Text): Peaceful spaces built by everyone
+  Narration (Voice): Mindful habits help create peaceful, comfortable public spaces for everyone.
+
+[Slide 5]
+  Subtitle (Screen Text): Small habits build lifelong respect
+  Narration (Voice): Everyday childhood habits often build lifelong respect for common spaces.
+
